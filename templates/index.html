@@ -20,7 +20,11 @@
 
         function limpiarFormulario() {
             document.getElementById("miFormulario").reset();
+            document.getElementById("errorMessage").textContent = "";
+            document.getElementById("serverStatus").innerText = "Verificando conexión...";
+            document.getElementById("serverStatus").classList.replace("bg-success", "bg-secondary");
         }
+
 
 
 
@@ -187,6 +191,10 @@
                 });
         }
 
+        // Ejecutar solo al cargar la página
+        document.addEventListener("DOMContentLoaded", checkServerStatus);
+
+
         // Ejecutar la verificación cada 5 segundos para actualizar el estado automáticamente
         setInterval(checkServerStatus, 5000);
 
@@ -214,6 +222,29 @@
                 });
         }
 
+        function obtenerNombreCliente() {
+            const cedulaCliente = document.getElementById('cedula_cliente').value.trim();
+            if (!cedulaCliente) {
+                document.getElementById("errorMessage").textContent = "⚠ Ingresa una cédula válida.";
+                return;
+            }
+
+            fetch(`https://api.hacienda.go.cr/fe/ae?identificacion=${cedulaCliente}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data && data.nombre) {
+                        document.getElementById('nombre').value = data.nombre;
+                        document.getElementById("errorMessage").textContent = "";
+                    } else {
+                        document.getElementById("errorMessage").textContent = "⚠ No se encontró el nombre.";
+                    }
+                })
+                .catch(error => {
+                    console.error("Error al obtener datos:", error);
+                    document.getElementById("errorMessage").textContent = "⚠ No se pudo conectar a la API.";
+                });
+        }
+
 
         // Ejecutar validación cuando se cargue la página
         document.addEventListener("DOMContentLoaded", validarRuta);
@@ -236,7 +267,24 @@
         });
 
 
+
+        document.getElementById("selectFolder").addEventListener("click", async function () {
+            try {
+                const response = await fetch("/set_save_path", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ path: "/opt/render/project/files/WABEDOCS" })
+                });
+                const data = await response.json();
+                document.getElementById("folderPath").value = data.message;
+            } catch (error) {
+                console.error("Error al seleccionar carpeta:", error);
+            }
+        });
+
+
     </script>
+
 
 </head>
 
@@ -244,11 +292,6 @@
 
     <div class="container my-5">
 
-        <!--<div class="mb-3">
-            <label for="savePath" class="form-label">Ruta de Guardado:</label>
-            <input type="text" id="savePath" class="form-control" value="P:\INS" readonly>
-            <p id="pathValidationMessage" class="mt-2"></p>
-        </div>
 
         <div class="mb-3">
             <label for="folderPath" class="form-label">Selecciona la Carpeta de Guardado:</label>
@@ -256,8 +299,11 @@
                 <input type="text" id="folderPath" class="form-control" placeholder="Ruta seleccionada" readonly>
                 <button id="selectFolder" class="btn btn-primary">📂 Seleccionar Carpeta</button>
             </div>
-        </div>-->
+        </div>
 
+        <p id="errorMessage" class="text-danger"></p>
+
+        <p id="selectedFolderMessage" class="mt-2"></p>
 
         <!-- Logo en lugar del título -->
         <div class="text-center mb-4">
@@ -287,7 +333,7 @@
                 <div class="col-md-4">
                     <label for="opcion" class="form-label">Selecciona una opción de cobertura:</label>
                     <select id="opcion" name="opcion" class="form-select" required>
-                        <option value="L">A</option>
+                        <option value="a">A</option>
                         <option value="C">C</option>
                         <option value="D">D</option>
                         <option value="H">H</option>

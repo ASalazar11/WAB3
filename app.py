@@ -7,21 +7,10 @@ from datetime import datetime
 import subprocess
 import sys
 from flask import send_file
-import tkinter as tk
-from tkinter import filedialog
 
 
 
 app = Flask(__name__)
-
-@app.route('/verificar_ruta', methods=['GET'])
-def verificar_ruta():
-    ruta = "P:\\INS"  # Ruta a validar
-    if os.path.exists(ruta):  # Verifica si la ruta existe
-        return jsonify({"exists": True, "message": "✔ La ruta P:\\INS está disponible."})
-    else:
-        return jsonify({"exists": False, "message": "⚠ La ruta P:\\INS no está disponible."})
-
 
 # Función para manejar rutas correctamente en PyInstaller
 def resource_path(relative_path):
@@ -84,22 +73,12 @@ def format_number(value, is_cedula=False):
             return "Teléfono inválido"
 
 
-ruta_guardado = os.path.join(os.path.expanduser("~"), "Desktop", "WABEDOCS")
+if os.name == "nt":  # Si está en Windows
+    ruta_guardado = os.path.join(os.environ["USERPROFILE"], "Desktop", "WABEDOCS")
+else:  # Si está en Linux (Render)
+    ruta_guardado = "/opt/render/project/files/WABEDOCS"
 
-@app.route("/seleccionar_carpeta")
-def seleccionar_carpeta():
-    try:
-        root = tk.Tk()
-        root.withdraw()  # Oculta la ventana de Tkinter
-        folder_selected = filedialog.askdirectory()  # Abre el selector de carpetas
 
-        if folder_selected:  
-            return jsonify({"path": folder_selected})  # Retorna la ruta de la carpeta
-        else:
-            return jsonify({"path": None})  # Si no se selecciona, retorna None
-
-    except Exception as e:
-        return jsonify({"error": str(e)})
 
 @app.route("/set_save_path", methods=["POST"])
 def set_save_path():
@@ -327,14 +306,12 @@ def generate_pdf():
         os.remove(temp_pdf2_path)
      
         # Responder con los archivos generados
-        subprocess.Popen([output_pdf1_path], shell=True)  # Abre el primer PDF
-        subprocess.Popen([output_pdf2_path], shell=True)  # Abre el segundo PDF
+        return send_file(output_pdf1_path, mimetype="application/pdf", as_attachment=True)
 
-        return "",204
 
     except Exception as e:
-        print(f"Error al abrir los PDFs: {e}")
-        return "", 500  # Devuelve un error sin mostrarlo en el frontend
+        return jsonify({"error": str(e)}), 500
+
 
 
 if __name__ == '__main__':
