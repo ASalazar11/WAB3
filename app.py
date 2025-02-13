@@ -73,10 +73,19 @@ def format_number(value, is_cedula=False):
             return "Teléfono inválido"
 
 
-if os.name == "nt":  # Si está en Windows
-    ruta_guardado = os.path.join(os.environ["USERPROFILE"], "Desktop", "WABEDOCS")
-else:  # Si está en Linux (Render)
-    ruta_guardado = "/opt/render/project/files/WABEDOCS"
+
+
+@app.route("/seleccionar_carpeta")
+def seleccionar_carpeta():
+    return jsonify({"error": "No se puede abrir el explorador de archivos en Render."})
+
+
+
+if os.name == "nt":  # Windows
+    ruta_guardado = os.path.join(os.environ.get("USERPROFILE", ""), "Desktop", "WABEDOCS")
+else:  # Linux (Render)
+    ruta_guardado = os.path.join(os.environ.get("HOME", "/tmp"), "WABEDOCS")
+
 
 
 
@@ -94,6 +103,7 @@ def set_save_path():
 
 # Asegurar que la carpeta de guardado exista
 os.makedirs(ruta_guardado, exist_ok=True)
+
 
 @app.route('/')
 def home():
