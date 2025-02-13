@@ -1,0 +1,14 @@
+
+pip install pyinstaller
+
+
+pyinstaller --onefile --add-data "templates;templates" --add-data "static;static" --add-data "pdfs;pdfs" app.py
+
+pyinstaller --onefile --windowed --add-data "templates;templates" --add-data "static;static" --add-data "pdfs;pdfs" app.py
+
+
+http://127.0.0.1:5000/
+
+
+C:\Users\Alon1\OneDrive\Escritorio\WAB3\.venv\Scripts\python.exe -m pip install --upgrade pip
+pip install --force-reinstall pyinstaller

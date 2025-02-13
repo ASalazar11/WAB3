@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generador de PDF</title>
+
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <!-- Hoja de estilos personalizada -->
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}">
+
+    <script>
+
+
+        function limpiarFormulario() {
+            document.getElementById("miFormulario").reset();
+        }
+
+
+
+
+        // Función para copiar los datos del cliente al formulario del responsable
+        function copiarAlResponsable() {
+            document.getElementById('cedula_responsable').value = document.getElementById('cedula_cliente').value;
+            document.getElementById('nombre_responsable').value = document.getElementById('nombre').value;
+            document.getElementById('correo_responsable').value = document.getElementById('correo').value;
+            document.getElementById('telefono_responsable').value = document.getElementById('telefono').value;
+        }
+
+        function copiarAlResponsableEstimacion() {
+            const cedulaEstimacion = document.getElementById('cedula_estimacion');
+            const nombreEstimacion = document.getElementById('nombre_estimacion');
+
+            if (cedulaEstimacion && nombreEstimacion) {
+                cedulaEstimacion.value = document.getElementById('cedula_cliente').value;
+                nombreEstimacion.value = document.getElementById('nombre').value;
+            } else {
+                console.error("Uno o más elementos no se encontraron en el DOM.");
+            }
+        }
+
+
+        function copiarAlResponsableEmpresa() {
+            const cedulaEmpresa = document.getElementById('cedula_empresa');
+            const nombreEmpresa = document.getElementById('nombre_empresa');
+
+            if (cedulaEmpresa && nombreEmpresa) {
+                cedulaEmpresa.value = document.getElementById('cedula_cliente').value;
+                nombreEmpresa.value = document.getElementById('nombre').value;
+            } else {
+                console.error("Uno o más elementos no se encontraron en el DOM.");
+            }
+        }
+
+
+        // Función para obtener el nombre del cliente desde la API de Hacienda
+        function obtenerNombreCliente() {
+            const cedulaCliente = document.getElementById('cedula_cliente').value;
+            if (!cedulaCliente.trim()) {
+                alert("Por favor ingresa un número de cédula válido para el cliente.");
+                return;
+            }
+
+            const urlCliente = `https://api.hacienda.go.cr/fe/ae?identificacion=${cedulaCliente}`;
+            fetch(urlCliente)
+                .then(response => response.json())
+                .then(data => {
+                    if (data && data.nombre) {
+                        document.getElementById('nombre').value = data.nombre;
+                    } else {
+                        alert("No se encontró el nombre para la cédula del cliente.");
+                    }
+                })
+                .catch(error => {
+                    console.error("Error al obtener los datos del cliente:", error);
+                    alert("Hubo un error al conectar con la API para el cliente.");
+                });
+        }
+
+        // Función para obtener el nombre del asesor desde la API de Hacienda
+        function obtenerNombreAsesor() {
+            const cedulaAsesor = document.getElementById('cedula_asesor').value;
+            if (!cedulaAsesor.trim()) {
+                alert("Por favor ingresa un número de cédula válido para el asesor.");
+                return;
+            }
+
+            const urlAsesor = `https://api.hacienda.go.cr/fe/ae?identificacion=${cedulaAsesor}`;
+            fetch(urlAsesor)
+                .then(response => response.json())
+                .then(data => {
+                    if (data && data.nombre) {
+                        document.getElementById('asesor').value = data.nombre;
+                    } else {
+                        alert("No se encontró el nombre para la cédula del asesor.");
+                    }
+                })
+                .catch(error => {
+                    console.error("Error al obtener los datos del asesor:", error);
+                    alert("Hubo un error al conectar con la API para el asesor.");
+                });
+        }
+
+        // Función para obtener los datos del responsable desde la API de Hacienda
+        function obtenerDatosResponsable() {
+            const cedula = document.getElementById('cedula_responsable').value;
+            if (!cedula.trim()) {
+                alert("Por favor ingresa un número de cédula válido.");
+                return;
+            }
+
+            const url = `https://api.hacienda.go.cr/fe/ae?identificacion=${cedula}`;
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    if (data && data.nombre) {
+                        document.getElementById('nombre_responsable').value = data.nombre;
+                    } else {
+                        alert("No se encontraron datos para esta cédula.");
+                    }
+                })
+                .catch(error => {
+                    console.error("Error al obtener los datos del responsable:", error);
+                    alert("Hubo un error al conectar con la API.");
+                });
+        }
+
+        function obtenerNombreEstimacion() {
+            const cedulaEstimacion = document.getElementById('cedula_estimacion').value;
+
+            if (!cedulaEstimacion.trim()) {
+                alert("Por favor ingresa un número de cédula válido.");
+                return;
+            }
+
+            const url = `https://api.hacienda.go.cr/fe/ae?identificacion=${cedulaEstimacion}`;
+
+            fetch(url)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error("Error en la respuesta de la API");
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data && data.nombre) {
+                        document.getElementById('nombre_estimacion').value = data.nombre;
+                    } else {
+                        alert("No se encontró el nombre para la cédula ingresada.");
+                    }
+                })
+                .catch(error => {
+                    console.error("Error al obtener los datos de la estimación:", error);
+                    alert("Hubo un error al conectar con la API.");
+                });
+        }
+
+
+        function toggleEmpresaFields() {
+            const condicion = document.getElementById('condicion').value;
+            const empresaFields = document.getElementById('empresa_fields');
+            if (condicion === "apoderado") {
+                empresaFields.style.display = "block";
+            } else {
+                empresaFields.style.display = "none";
+                document.getElementById('cedula_empresa').value = " ";
+                document.getElementById('nombre_empresa').value = " ";
+            }
+        }
+
+        function checkServerStatus() {
+            fetch("/ping")
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById("serverStatus").innerText = "🟢 Servidor Conectado";
+                    document.getElementById("serverStatus").classList.replace("bg-secondary", "bg-success");
+                })
+                .catch(error => {
+                    document.getElementById("serverStatus").innerText = "🔴 Servidor Desconectado";
+                    document.getElementById("serverStatus").classList.replace("bg-secondary", "bg-danger");
+                });
+        }
+
+        // Ejecutar la verificación cada 5 segundos para actualizar el estado automáticamente
+        setInterval(checkServerStatus, 5000);
+
+        // Ejecutar la verificación al cargar la página
+        checkServerStatus();
+
+        function validarRuta() {
+            fetch("/verificar_ruta")
+                .then(response => response.json())
+                .then(data => {
+                    const mensaje = document.getElementById("pathValidationMessage");
+                    if (data.exists) {
+                        mensaje.textContent = data.message;
+                        mensaje.classList.remove("text-danger");
+                        mensaje.classList.add("text-success");
+                    } else {
+                        mensaje.textContent = data.message;
+                        mensaje.classList.remove("text-success");
+                        mensaje.classList.add("text-danger");
+                    }
+                })
+                .catch(error => {
+                    console.error("Error al verificar la ruta:", error);
+                    document.getElementById("pathValidationMessage").textContent = "⚠ Error en la validación.";
+                });
+        }
+
+
+        // Ejecutar validación cuando se cargue la página
+        document.addEventListener("DOMContentLoaded", validarRuta);
+
+
+
+        document.getElementById("selectFolder").addEventListener("click", async function () {
+            try {
+                const response = await fetch("/seleccionar_carpeta");
+                const data = await response.json();
+
+                if (data.path) {
+                    document.getElementById("folderPath").value = data.path;
+                } else {
+                    alert("No se seleccionó ninguna carpeta.");
+                }
+            } catch (error) {
+                console.error("Error al seleccionar carpeta:", error);
+            }
+        });
+
+
+    </script>
+
+</head>
+
+<body class="bg-ligth">
+
+    <div class="container my-5">
+
+        <!--<div class="mb-3">
+            <label for="savePath" class="form-label">Ruta de Guardado:</label>
+            <input type="text" id="savePath" class="form-control" value="P:\INS" readonly>
+            <p id="pathValidationMessage" class="mt-2"></p>
+        </div>
+
+        <div class="mb-3">
+            <label for="folderPath" class="form-label">Selecciona la Carpeta de Guardado:</label>
+            <div class="input-group">
+                <input type="text" id="folderPath" class="form-control" placeholder="Ruta seleccionada" readonly>
+                <button id="selectFolder" class="btn btn-primary">📂 Seleccionar Carpeta</button>
+            </div>
+        </div>-->
+
+
+        <!-- Logo en lugar del título -->
+        <div class="text-center mb-4">
+            <img src="https://tallerwabe.com/wp-content/uploads/2018/11/wabe-logo.png" alt="Logo Wabe" class="img-fluid"
+                style="max-width: 250px;">
+        </div>
+
+        <div class="text-center mb-3">
+            <button type="button" class="btn btn-danger" onclick="limpiarFormulario()">Limpiar Formulario</button>
+
+            <span id="serverStatus" class="badge bg-secondary">Verificando conexión...</span>
+
+        </div>
+
+        <!-- Formulario -->
+        <form id="miFormulario" action="/generate_pdf" method="POST" class="bg-white p-4 rounded shadow">
+            <!-- Primer Row: Número de Caso/Aviso, Consecutivo y Opción -->
+            <div class="row mb-3">
+                <div class="col-md-4">
+                    <label for="aviso" class="form-label">Número de Caso/Aviso:</label>
+                    <input type="text" id="aviso" name="aviso" class="form-control" required>
+                </div>
+                <div class="col-md-4">
+                    <label for="consecutivo" class="form-label">Número de Consecutivo (0000):</label>
+                    <input type="text" id="consecutivo" name="consecutivo" class="form-control" required>
+                </div>
+                <div class="col-md-4">
+                    <label for="opcion" class="form-label">Selecciona una opción de cobertura:</label>
+                    <select id="opcion" name="opcion" class="form-select" required>
+                        <option value="L">A</option>
+                        <option value="C">C</option>
+                        <option value="D">D</option>
+                        <option value="H">H</option>
+                        <option value="L">L</option>
+                        <option value="L">RC</option>
+
+                    </select>
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label for="fecha_evento" class="form-label">Fecha del Evento:</label>
+                    <input type="date" id="fecha_evento" name="fecha_evento" class="form-control" required>
+                </div>
+                <div class="col-md-6">
+                    <label for="fecha_ingreso" class="form-label">Fecha de Ingreso:</label>
+                    <input type="date" id="fecha_ingreso" name="fecha_ingreso" class="form-control" required>
+                </div>
+            </div>
+
+            <!-- Segundo Row: División en tres columnas (CLIENTE, ASESOR, VEHICULO) -->
+            <div class="row mb-3">
+                <!-- CLIENTE -->
+                <div class="col-md-4">
+                    <h5>CLIENTE</h5>
+
+                    <label for="cedula_cliente" class="form-label">Cédula del Cliente:</label>
+                    <div class="input-group">
+                        <input type="text" id="cedula_cliente" name="cedula" class="form-control" required>
+                        <button type="button" class="btn btn-outline-secondary"
+                            onclick="obtenerNombreCliente()">Buscar</button>
+                    </div>
+                    <label for="nombre" class="form-label">Nombre del Cliente:</label>
+                    <input type="text" id="nombre" name="nombre" class="form-control" required>
+
+                    <label for="telefono" class="form-label">Número de Teléfono:</label>
+                    <input type="tel" id="telefono" name="telefono" class="form-control" required>
+                    <label for="correo" class="form-label">Correo Electrónico:</label>
+                    <input type="email" id="correo" name="correo" class="form-control" required>
+
+                </div>
+
+                <!-- ASESOR -->
+                <div class="col-md-4">
+                    <h5>ASESOR</h5>
+                    <label for="cedula_asesor" class="form-label">Cédula del Asesor:</label>
+                    <div class="input-group">
+                        <input type="text" id="cedula_asesor" name="cedula_asesor" class="form-control" required>
+                        <button type="button" class="btn btn-outline-secondary"
+                            onclick="obtenerNombreAsesor()">Buscar</button>
+                    </div>
+                    <label for="asesor" class="form-label">Nombre del Asesor:</label>
+                    <input type="text" id="asesor" name="asesor" class="form-control" required>
+                </div>
+
+                <!-- VEHICULO -->
+                <div class="col-md-4">
+                    <h5>VEHÍCULO</h5>
+                    <label for="placa" class="form-label">Placa:</label>
+                    <input type="text" id="placa" name="placa" class="form-control" required>
+                    <label for="marca" class="form-label">Marca:</label>
+                    <input type="text" id="marca" name="marca" class="form-control" required>
+                    <label for="modelo" class="form-label">Modelo:</label>
+                    <input type="text" id="modelo" name="modelo" class="form-control" required>
+                    <label for="anio" class="form-label">Año:</label>
+                    <input type="number" id="anio" name="anio" class="form-control" required>
+                    <label for="color" class="form-label">Color:</label>
+                    <input type="text" id="color" name="color" class="form-control" required>
+                </div>
+            </div>
+            <hr>
+            <div class="row mb-3">
+                <div class="col-md-6 text-center">
+                    <h5>VALORACIÓN</h5>
+
+                    <div class="card mt-3">
+                        <div class="card-body">
+                            <button type="button" class="btn btn-primary mt-3" onclick="copiarAlResponsable()">Copiar al
+                                Cliente</button>
+                            <hr>
+                            <div id="responsable_form" class="mt-3">
+                                <label for="cedula_responsable" class="form-label">Cédula del responsable:</label>
+                                <div class="input-group">
+                                    <input type="text" id="cedula_responsable" name="cedula_responsable"
+                                        class="form-control">
+                                    <button type="button" class="btn btn-outline-secondary"
+                                        onclick="obtenerDatosResponsable()">Buscar</button>
+                                </div>
+                                <label for="nombre_responsable" class="form-label mt-2">Nombre del responsable:</label>
+                                <input type="text" id="nombre_responsable" name="nombre_responsable"
+                                    class="form-control">
+                                <label for="correo_responsable" class="form-label mt-2">Correo electrónico:</label>
+                                <input type="email" id="correo_responsable" name="correo_responsable"
+                                    class="form-control">
+                                <label for="telefono_responsable" class="form-label mt-2">Teléfono:</label>
+                                <input type="text" id="telefono_responsable" name="telefono_responsable"
+                                    class="form-control">
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="card mt-3">
+                        <div class="card-body">
+                            <h5 class="card-title">Ubicación</h5>
+                            <hr>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <label for="provincia" class="form-label">Provincia:</label>
+                                    <input type="text" id="provincia" name="provincia" class="form-control">
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="canton" class="form-label">Cantón:</label>
+                                    <input type="text" id="canton" name="canton" class="form-control">
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="distrito" class="form-label">Distrito:</label>
+                                    <input type="text" id="distrito" name="distrito" class="form-control">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="col-md-6 text-center">
+                    <h5>ESTIMACIÓN</h5>
+
+                    <div class="card mt-3">
+                        <div class="card-body">
+                            <button type="button" class="btn btn-primary mt-3"
+                                onclick="copiarAlResponsableEstimacion()">Copiar al Cliente</button>
+                            <hr>
+                            <label for="cedula_estimacion" class="form-label">Cédula Estimación:</label>
+                            <div class="input-group">
+                                <input type="text" id="cedula_estimacion" name="cedula_estimacion" class="form-control"
+                                    required>
+                                <button type="button" class="btn btn-outline-secondary"
+                                    onclick="obtenerNombreEstimacion()">Buscar</button>
+                            </div>
+                            <label for="nombre_estimacion" class="form-label mt-2">Nombre Estimación:</label>
+                            <input type="text" id="nombre_estimacion" name="nombre_estimacion" class="form-control"
+                                required>
+                            <h6 class="card-title mt-4">Condición</h6>
+                            <div class="dropdown">
+                                <select class="form-select" id="condicion" name="condicion"
+                                    onchange="toggleEmpresaFields()">
+                                    <option value="asegurado">Asegurado</option>
+                                    <option value="apoderado">Apoderado </option>
+                                    <option value="conductor">Conductor </option>
+                                    <option value="propietario_registral">Propietario Registral</option>
+                                    <option value="otra_condicion">OTRA CONDICIÓN</option>
+                                </select>
+                            </div>
+                            <div id="empresa_fields" style="display: none; margin-top: 15px;">
+                                <button type="button" class="btn btn-primary mt-3"
+                                    onclick="copiarAlResponsableEmpresa()">Copiar a la Empresa</button>
+                                <hr>
+                                <label for="cedula_empresa" class="form-label">Cédula de la Empresa:</label>
+                                <input type="text" id="cedula_empresa" name="cedula_empresa" class="form-control"
+                                    value=" ">
+                                <label for="nombre_empresa" class="form-label mt-2">Nombre de la Empresa:</label>
+                                <input type="text" id="nombre_empresa" name="nombre_empresa" class="form-control"
+                                    value=" ">
+                            </div>
+                        </div>
+
+                    </div>
+
+
+                    <div class="card mt-3">
+                        <div class="card-body">
+                            <h6 class="card-title">Opciones de Repuestos para el vehiculo</h6>
+                            <hr>
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="nuevos_originales"
+                                    name="nuevos_originales">
+                                <label class="form-check-label" for="nuevos_originales">Nuevos Originales</label>
+                            </div>
+                            <div class="form-check mt-2">
+                                <input type="checkbox" class="form-check-input" id="genericos" name="genericos">
+                                <label class="form-check-label" for="genericos">Genéricos</label>
+                            </div>
+                            <div class="form-check mt-2">
+                                <input type="checkbox" class="form-check-input" id="usados_originales"
+                                    name="usados_originales">
+                                <label class="form-check-label" for="usados_originales">Usados Originales</label>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+            <hr>
+            <div class="row mb-3">
+                <div class="col-12 text-center">
+                    <button type="submit" class="btn btn-success">Generar PDF</button>
+                </div>
+            </div>
+
+        </form>
+    </div>
+
+</body>
+
+</html>
