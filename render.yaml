@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: mi_app_flask
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: bash start.sh
+    plan: free
+    envVars:
+      - key: SECRET_KEY
+        sync: false
+      - key: UPLOAD_FOLDER
+        value: "/opt/render/project/files/WABEDOCS"
