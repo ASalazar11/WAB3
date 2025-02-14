@@ -6,6 +6,8 @@ from PyPDF2 import PdfReader, PdfWriter
 from datetime import datetime
 from app.utils import format_number, split_date
 
+
+
 def generate_pdf(request):
     try:
         required_fields = ["aviso", "consecutivo", "opcion", "cedula", "nombre", "telefono"]
