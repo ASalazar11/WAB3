@@ -1,7 +1,7 @@
-from flask import Blueprint, render_template, request, jsonify, send_file, send_from_directory
+from flask import Blueprint, render_template, request, jsonify, send_from_directory
 import os
 from app.utils import format_number, split_date
-from app.pdf_generator import generate_pdf
+from app.pdf_generator import generate_pdf  # ✅ Importamos solo la función necesaria
 
 main = Blueprint("main", __name__)
 
@@ -15,7 +15,7 @@ def ping():
 
 @main.route("/generate_pdf", methods=["POST"])
 def generate_pdf_route():
-    return generate_pdf(request)
+    return generate_pdf(request)  # ✅ Ahora la función está correctamente referenciada
 
 @main.route("/download/<filename>")
 def download_file(filename):

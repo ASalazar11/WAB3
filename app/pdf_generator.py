@@ -1,16 +1,15 @@
 import os
-from flask import jsonify, send_file
-from reportlab.pdfgen import canvas
+import sys  # 🔹 Se agregó sys porque `resource_path()` lo usa
+from flask import jsonify, request, url_for
+from datetime import datetime
 from reportlab.lib.pagesizes import letter
 from PyPDF2 import PdfReader, PdfWriter
-from datetime import datetime
 from app.utils import format_number, split_date
-from flask import request, url_for
-from flask import Flask
-from app.routes import main 
+from reportlab.pdfgen import canvas
+
 
 def resource_path(relative_path):
-    """Retorna la ruta absoluta compatible con Render y PyInstaller."""
+    """Retorna la ruta absoluta compatible con PyInstaller y Render."""
     try:
         base_path = sys._MEIPASS  # Para PyInstaller
     except Exception:
@@ -18,28 +17,24 @@ def resource_path(relative_path):
     return os.path.join(base_path, relative_path)
 
 
-
-app = Flask(__name__)
-app.register_blueprint(main)  # Registra el Blueprint
-
-
 def generate_pdf(request):
     try:
-    # Verifica si los campos están presentes
+        # 1️⃣ Verificar si los campos requeridos están presentes
         required_fields = [
             "aviso", "consecutivo", "opcion", "cedula", "nombre", "telefono",
             "correo", "fecha_evento", "fecha_ingreso", "placa", "marca", "modelo",
             "anio", "color", "asesor", "cedula_asesor",
             "cedula_responsable", "nombre_responsable", "correo_responsable", "telefono_responsable",
-            "condicion", "provincia", "canton", "distrito", "cedula_empresa", "nombre_empresa","cedula_estimacion","nombre_estimacion"
+            "condicion", "provincia", "canton", "distrito", "cedula_empresa", "nombre_empresa",
+            "cedula_estimacion", "nombre_estimacion"
         ]
-
 
         form_data = {field: request.form.get(field, "").strip() for field in required_fields}
         for field, value in form_data.items():
             if not value:
                 return jsonify({"error": f"El campo {field} está vacío."}), 400
 
+        # 2️⃣ Extraer y formatear datos
         aviso = form_data["aviso"]
         consecutivo = form_data["consecutivo"]
         opcion = form_data["opcion"]
@@ -64,40 +59,39 @@ def generate_pdf(request):
         nombre_responsable = form_data["nombre_responsable"]
         correo_responsable = form_data["correo_responsable"]
         telefono_responsable = format_number(form_data["telefono_responsable"])
-        
         cedula_estimacion = format_number(form_data["cedula_estimacion"], is_cedula=True)
         nombre_estimacion = form_data["nombre_estimacion"]
-        
+
         # Datos de ubicación
         provincia = form_data["provincia"]
         canton = form_data["canton"]
         distrito = form_data["distrito"]
-        
+
         # Datos de la empresa (si aplica)
         cedula_empresa = format_number(form_data["cedula_empresa"], is_cedula=True)
         nombre_empresa = form_data["nombre_empresa"]
-        
-        nombre_responsable = form_data["nombre_responsable"]
-        correo_responsable = form_data["correo_responsable"]
-        telefono_responsable = format_number(form_data["telefono_responsable"])
 
         # Obtener la fecha actual para el nombre del archivo
         current_date = datetime.now().strftime("%Y-%m-%d")
         sanitized_name = "".join([c if c.isalnum() or c in " ._-()" else "_" for c in nombre_cliente])
 
+        # 3️⃣ Asegurar que la ruta de guardado exista
         save_path = os.getenv("UPLOAD_FOLDER", "/opt/render/project/files/WABEDOCS")
-        os.makedirs(save_path, exist_ok=True)
+        if not os.path.exists(save_path):
+            os.makedirs(save_path, exist_ok=True)
 
+        # Crear carpeta del caso
         case_number_folder = os.path.join(save_path, f"25-{form_data['consecutivo']}")
-        os.makedirs(case_number_folder, exist_ok=True)
+        if not os.path.exists(case_number_folder):
+            os.makedirs(case_number_folder, exist_ok=True)
 
-        # ✅ 4️⃣ Definir rutas de salida para PDFs
+        # 4️⃣ Definir rutas de salida para PDFs
         temp_pdf1_path = os.path.join(case_number_folder, "temp_valoracion.pdf")
         temp_pdf2_path = os.path.join(case_number_folder, "temp_estimacion.pdf")
-        output_pdf1_path = os.path.join(case_number_folder, f"{form_data['nombre']}_valoracion.pdf")
-        output_pdf2_path = os.path.join(case_number_folder, f"{form_data['nombre']}_estimacion.pdf")
+        output_pdf1_path = os.path.join(case_number_folder, f"{sanitized_name}_valoracion.pdf")
+        output_pdf2_path = os.path.join(case_number_folder, f"{sanitized_name}_estimacion.pdf")
 
-       
+           
         # --- Generar Primer PDF (Valoración) ---
         c1 = canvas.Canvas(temp_pdf1_path, pagesize=letter)
         c1.setFont("Helvetica-Bold", 50)
@@ -184,7 +178,7 @@ def generate_pdf(request):
 
         c2.save()
 
-# ✅ 7️⃣ FUNCION PARA COMBINAR PDFS CON LAS PLANTILLAS
+        # 5️⃣ Función para combinar PDFs con plantillas
         def combine_pdfs(template_path, temp_pdf_path, output_path):
             template_pdf = PdfReader(template_path)
             temp_pdf = PdfReader(temp_pdf_path)
@@ -199,25 +193,23 @@ def generate_pdf(request):
             with open(output_path, "wb") as output_file:
                 writer.write(output_file)
 
-        # ✅ 8️⃣ RUTAS DE LAS PLANTILLAS PDF
+        # 6️⃣ Rutas de las plantillas PDF
         VALORACION_PDF_PATH = resource_path("pdfs/VALORACION.pdf")
         ESTIMACION_PDF_PATH = resource_path("pdfs/ESTIMACION.pdf")
 
-        # ✅ 9️⃣ COMBINAR LOS PDFS CON LAS PLANTILLAS
+        # 7️⃣ Combinar los PDFs con las plantillas
         combine_pdfs(VALORACION_PDF_PATH, temp_pdf1_path, output_pdf1_path)
         combine_pdfs(ESTIMACION_PDF_PATH, temp_pdf2_path, output_pdf2_path)
 
-        # ✅ 🔟 ELIMINAR ARCHIVOS TEMPORALES
+        # 8️⃣ Eliminar archivos temporales
         os.remove(temp_pdf1_path)
         os.remove(temp_pdf2_path)
-        
-        
-        # Generar URLS limpias para los PDFs generados
+
+        # 9️⃣ Generar URLs limpias para los PDFs generados
         valoracion_pdf_url = url_for('download_file', filename=os.path.basename(output_pdf1_path), _external=True)
         estimacion_pdf_url = url_for('download_file', filename=os.path.basename(output_pdf2_path), _external=True)
 
-
-        # ✅ 🔥 RESPONDER CON AMBOS ARCHIVOS GENERADOS
+        # 🔟 Responder con ambos archivos generados
         return jsonify({
             "valoracion_pdf": valoracion_pdf_url,
             "estimacion_pdf": estimacion_pdf_url

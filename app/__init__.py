@@ -1,4 +1,5 @@
 import os
+import sys  # ✅ Se agregó esta línea
 from flask import Flask
 from config import Config
 
@@ -8,7 +9,6 @@ def resource_path(relative_path):
         base_path = sys._MEIPASS  # PyInstaller
     except Exception:
         base_path = os.path.abspath(".")
-
     return os.path.join(base_path, relative_path)
 
 def create_app():
@@ -18,7 +18,7 @@ def create_app():
 
     app.config.from_object(Config)
 
-    from app.routes import main
+    from app.routes import main  # ✅ Se mueve aquí después de crear la app
     app.register_blueprint(main)
 
     return app
