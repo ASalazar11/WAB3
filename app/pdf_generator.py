@@ -6,6 +6,8 @@ from PyPDF2 import PdfReader, PdfWriter
 from datetime import datetime
 from app.utils import format_number, split_date
 from flask import request, url_for
+from flask import Flask
+from app.routes import main 
 
 def resource_path(relative_path):
     """Retorna la ruta absoluta compatible con Render y PyInstaller."""
@@ -14,6 +16,12 @@ def resource_path(relative_path):
     except Exception:
         base_path = os.path.abspath(".")
     return os.path.join(base_path, relative_path)
+
+
+
+app = Flask(__name__)
+app.register_blueprint(main)  # Registra el Blueprint
+
 
 def generate_pdf(request):
     try:
