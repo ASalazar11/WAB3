@@ -175,8 +175,7 @@ def generate_pdf(request):
 
         c2.save()
 
-
-        # ✅ FUNCION PARA COMBINAR PDFS CON LAS PLANTILLAS
+# ✅ 7️⃣ FUNCION PARA COMBINAR PDFS CON LAS PLANTILLAS
         def combine_pdfs(template_path, temp_pdf_path, output_path):
             template_pdf = PdfReader(template_path)
             temp_pdf = PdfReader(temp_pdf_path)
@@ -184,27 +183,30 @@ def generate_pdf(request):
 
             for page_number in range(len(template_pdf.pages)):
                 template_page = template_pdf.pages[page_number]
-                if page_number == 0:
+                if page_number == 0 and len(temp_pdf.pages) > 0:
                     template_page.merge_page(temp_pdf.pages[0])
                 writer.add_page(template_page)
 
             with open(output_path, "wb") as output_file:
                 writer.write(output_file)
 
-        # ✅ RUTAS DE LAS PLANTILLAS PDF
+        # ✅ 8️⃣ RUTAS DE LAS PLANTILLAS PDF
         VALORACION_PDF_PATH = resource_path("pdfs/VALORACION.pdf")
         ESTIMACION_PDF_PATH = resource_path("pdfs/ESTIMACION.pdf")
 
-        # ✅ COMBINAR LOS PDFS CON LAS PLANTILLAS
+        # ✅ 9️⃣ COMBINAR LOS PDFS CON LAS PLANTILLAS
         combine_pdfs(VALORACION_PDF_PATH, temp_pdf1_path, output_pdf1_path)
         combine_pdfs(ESTIMACION_PDF_PATH, temp_pdf2_path, output_pdf2_path)
 
-        # ✅ ELIMINAR ARCHIVOS TEMPORALES
+        # ✅ 🔟 ELIMINAR ARCHIVOS TEMPORALES
         os.remove(temp_pdf1_path)
         os.remove(temp_pdf2_path)
 
-        # ✅ RESPONDER CON LOS ARCHIVOS GENERADOS
-        return send_file(output_pdf1_path, mimetype="application/pdf", as_attachment=True)
+        # ✅ 🔥 RESPONDER CON AMBOS ARCHIVOS GENERADOS
+        return jsonify({
+            "valoracion_pdf": f"/download/{output_pdf1_path}",
+            "estimacion_pdf": f"/download/{output_pdf2_path}"
+        })
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
