@@ -5,6 +5,7 @@ from reportlab.lib.pagesizes import letter
 from PyPDF2 import PdfReader, PdfWriter
 from datetime import datetime
 from app.utils import format_number, split_date
+from flask import request, url_for
 
 def resource_path(relative_path):
     """Retorna la ruta absoluta compatible con Render y PyInstaller."""
@@ -201,11 +202,17 @@ def generate_pdf(request):
         # ✅ 🔟 ELIMINAR ARCHIVOS TEMPORALES
         os.remove(temp_pdf1_path)
         os.remove(temp_pdf2_path)
+        
+        
+        # Generar URLS limpias para los PDFs generados
+        valoracion_pdf_url = url_for('download_file', filename=os.path.basename(output_pdf1_path), _external=True)
+        estimacion_pdf_url = url_for('download_file', filename=os.path.basename(output_pdf2_path), _external=True)
+
 
         # ✅ 🔥 RESPONDER CON AMBOS ARCHIVOS GENERADOS
         return jsonify({
-            "valoracion_pdf": f"/download/{output_pdf1_path}",
-            "estimacion_pdf": f"/download/{output_pdf2_path}"
+            "valoracion_pdf": valoracion_pdf_url,
+            "estimacion_pdf": estimacion_pdf_url
         })
 
     except Exception as e:
