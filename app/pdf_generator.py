@@ -134,6 +134,8 @@ def generate_pdf(request):
         c1.drawString(115, 398, f"{cedula_responsable}")
         c1.drawString(300, 415, f"{correo_responsable}")
         c1.save()
+        
+        print(f"✅ Archivo temp PDF1 generado: {temp_pdf1_path}")  # Después de c1.save()
 
         # --- Generar Segundo PDF (Estimación) ---
         c2 = canvas.Canvas(temp_pdf2_path, pagesize=letter)
@@ -185,6 +187,8 @@ def generate_pdf(request):
         c2.drawString(425, 479, f"3-101-085331")
 
         c2.save()
+        
+        print(f"✅ Archivo temp PDF2 generado: {temp_pdf2_path}")  # Después de c2.save()
 
         # 5️⃣ Función para combinar PDFs con plantillas
         def combine_pdfs(template_path, temp_pdf_path, output_path):
@@ -200,6 +204,10 @@ def generate_pdf(request):
 
             with open(output_path, "wb") as output_file:
                 writer.write(output_file)
+                
+        print(f"✅ Archivo final PDF1 generado: {output_pdf1_path}")  
+        print(f"✅ Archivo final PDF2 generado: {output_pdf2_path}")  
+
                 
         # 🔍 Verificar si los archivos existen antes de devolver la respuesta
         if not os.path.exists(output_pdf1_path):
@@ -223,6 +231,10 @@ def generate_pdf(request):
         # 9️⃣ Generar URLs limpias para los PDFs generados
         valoracion_pdf_url = url_for('main.download_file', filename=os.path.basename(output_pdf1_path), _external=True)
         estimacion_pdf_url = url_for('main.download_file', filename=os.path.basename(output_pdf2_path), _external=True)
+        
+        print(f"📄 Páginas en temp PDF1: {len(temp_pdf1.pages)}")
+        print(f"📄 Páginas en temp PDF2: {len(temp_pdf2.pages)}")
+
 
 
         # 🔟 Responder con ambos archivos generados
