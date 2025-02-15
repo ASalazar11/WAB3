@@ -1,26 +1,14 @@
-import os
 import sys  
-from flask import jsonify, request, url_for
+import io
+from flask import jsonify, request, send_file
 from datetime import datetime
 from reportlab.lib.pagesizes import letter
-from PyPDF2 import PdfReader, PdfWriter
-from app.utils import format_number, split_date
 from reportlab.pdfgen import canvas
+from app.utils import format_number, split_date
 
-
-
-
-def resource_path(relative_path):
-    """Retorna la ruta absoluta compatible con PyInstaller y Render."""
-    try:
-        base_path = sys._MEIPASS  
-    except Exception:
-        base_path = os.path.abspath(".")
-    return os.path.join(base_path, relative_path)
 
 def generate_pdf(request):
     try:
-        
         # ✅ 1️⃣ Verificar que todos los datos requeridos están presentes
         required_fields = [
             "aviso", "consecutivo", "opcion", "cedula", "nombre", "telefono",
@@ -36,7 +24,6 @@ def generate_pdf(request):
             if not value:
                 return jsonify({"error": f"El campo {field} está vacío."}), 400
 
-     
         aviso = form_data["aviso"]
         consecutivo = form_data["consecutivo"]
         opcion = form_data["opcion"]
@@ -53,6 +40,7 @@ def generate_pdf(request):
         color = form_data["color"]
         asesor = form_data["asesor"]
         cedula_asesor = format_number(form_data["cedula_asesor"], is_cedula=True)
+
         dia_evento, mes_evento, anio_evento = split_date(fecha_evento)
         dia_ingreso, mes_ingreso, anio_ingreso = split_date(fecha_ingreso)
 
@@ -74,31 +62,12 @@ def generate_pdf(request):
         nombre_empresa = form_data["nombre_empresa"]
 
         # Obtener la fecha actual para el nombre del archivo
-        current_date = datetime.now().strftime("%Y-%m-%d")
         sanitized_name = "".join([c if c.isalnum() or c in " ._-()" else "_" for c in nombre_cliente])
-        
-        
-        if os.name == "nt":  # Windows
-            save_path = os.path.join(os.environ["USERPROFILE"], "Downloads", "WABEDOCS")
-        else:  # Linux (Render)
-            save_path = "/opt/render/project/tmp/WABEDOCS"
 
+        # ✅ 2️⃣ Generar Primer PDF (Valoración)
+        pdf1_buffer = io.BytesIO()
+        c1 = canvas.Canvas(pdf1_buffer, pagesize=letter)
 
-        os.makedirs(save_path, exist_ok=True)  # Asegurar que exista la carpeta
-
-        case_number_folder = os.path.join(save_path, f"25-{form_data['consecutivo']}")
-        os.makedirs(case_number_folder, exist_ok=True)
-
-
-        # 4️⃣ Definir rutas de salida para PDFs
-        temp_pdf1_path = os.path.join(case_number_folder, "temp_valoracion.pdf")
-        temp_pdf2_path = os.path.join(case_number_folder, "temp_estimacion.pdf")
-        output_pdf1_path = os.path.join(case_number_folder, f"{sanitized_name}_valoracion.pdf")
-        output_pdf2_path = os.path.join(case_number_folder, f"{sanitized_name}_estimacion.pdf")
-
-           
-        # --- Generar Primer PDF (Valoración) ---
-        c1 = canvas.Canvas(temp_pdf1_path, pagesize=letter)
         c1.setFont("Helvetica-Bold", 50)
         c1.drawString(430, 650, f"{consecutivo}")
         c1.setFont("Helvetica-Bold", 22)
@@ -131,12 +100,12 @@ def generate_pdf(request):
         c1.drawString(115, 398, f"{cedula_responsable}")
         c1.drawString(300, 415, f"{correo_responsable}")
         c1.save()
-        
-        print(f"✅ Archivo temp PDF1 generado: {temp_pdf1_path}")  # Después de c1.save()
-        sys.stdout.flush()
 
-        # --- Generar Segundo PDF (Estimación) ---
-        c2 = canvas.Canvas(temp_pdf2_path, pagesize=letter)
+
+        # ✅ 3️⃣ Generar Segundo PDF (Estimación)
+        pdf2_buffer = io.BytesIO()
+        c2 = canvas.Canvas(pdf2_buffer, pagesize=letter)
+
         c2.setFont("Helvetica-Bold", 10)
         c2.drawString(81, 678, f"{placa}")
         c2.drawString(435, 678, f"{aviso}")
@@ -185,91 +154,28 @@ def generate_pdf(request):
         c2.drawString(425, 479, f"3-101-085331")
 
         c2.save()
-        
-        print(f"✅ Archivo temp PDF2 generado: {temp_pdf2_path}")  # Después de c2.save()
-        sys.stdout.flush()
-        
-        if not os.path.exists(temp_pdf1_path) or not os.path.exists(temp_pdf2_path):
-            return jsonify({"error": "Uno de los archivos PDF temporales no se generó correctamente."}), 500
-
-        
-        # 🔹 Rutas de las plantillas PDF
-        VALORACION_PDF_PATH = resource_path("pdfs/VALORACION.pdf")
-        ESTIMACION_PDF_PATH = resource_path("pdfs/ESTIMACION.pdf")
-        
-        print("📂 Revisando si existen las plantillas PDF:")
-        print(f"VALORACION.pdf existe: {os.path.exists(VALORACION_PDF_PATH)}")
-        print(f"ESTIMACION.pdf existe: {os.path.exists(ESTIMACION_PDF_PATH)}")
 
 
+        # ✅ 4️⃣ Mover punteros al inicio
+        pdf1_buffer.seek(0)
+        pdf2_buffer.seek(0)
 
-        def combine_pdfs(template_path, temp_pdf_path, output_path):
-            print(f"🛠️ Combinando PDFs: {template_path} + {temp_pdf_path} → {output_path}")
-        
-            template_pdf = PdfReader(template_path)
-            temp_pdf = PdfReader(temp_pdf_path)
-            writer = PdfWriter()
+        # ✅ 5️⃣ Enviar los archivos ZIP
+        import zipfile
+        zip_buffer = io.BytesIO()
 
-            for page_number in range(len(template_pdf.pages)):
-                template_page = template_pdf.pages[page_number]
-                if page_number == 0 and len(temp_pdf.pages) > 0:
-                    template_page.merge_page(temp_pdf.pages[0])
-                writer.add_page(template_page)
+        with zipfile.ZipFile(zip_buffer, "w") as zip_file:
+            zip_file.writestr(f"{sanitized_name}_valoracion.pdf", pdf1_buffer.getvalue())
+            zip_file.writestr(f"{sanitized_name}_estimacion.pdf", pdf2_buffer.getvalue())
 
-            # 🛠️ Intentar escribir el archivo y verificar errores
-            try:
-                with open(output_path, "wb") as output_file:
-                    writer.write(output_file)
-                print(f"✅ PDF combinado generado: {output_path}")
-            except Exception as e:
-                print(f"❌ ERROR al escribir el archivo PDF combinado: {str(e)}")
+        zip_buffer.seek(0)
 
-
-                
-        # 🔍 Verificar si los archivos existen antes de devolver la respuesta
-        combine_pdfs(VALORACION_PDF_PATH, temp_pdf1_path, output_pdf1_path)
-        combine_pdfs(ESTIMACION_PDF_PATH, temp_pdf2_path, output_pdf2_path)
-
-        # Verificar después de la combinación
-        if os.path.exists(output_pdf1_path):
-            print(f"✅ Archivo final PDF1 generado correctamente: {output_pdf1_path}")
-        else:
-            print(f"❌ ERROR: El archivo {output_pdf1_path} no existe DESPUÉS de combinar PDFs.")
-
-        if os.path.exists(output_pdf2_path):
-            print(f"✅ Archivo final PDF2 generado correctamente: {output_pdf2_path}")
-        else:
-            print(f"❌ ERROR: El archivo {output_pdf2_path} no existe DESPUÉS de combinar PDFs.")
-
-
-        # 7️⃣ Combinar los PDFs con las plantillas
-        combine_pdfs(VALORACION_PDF_PATH, temp_pdf1_path, output_pdf1_path)
-        combine_pdfs(ESTIMACION_PDF_PATH, temp_pdf2_path, output_pdf2_path)
-
-        # 8️⃣ Eliminar archivos temporales
-        os.remove(temp_pdf1_path)
-        os.remove(temp_pdf2_path)
-
-        # 9️⃣ Generar URLs limpias para los PDFs generados
-        valoracion_pdf_url = url_for('main.download_file', filename=os.path.basename(output_pdf1_path), _external=True)
-        estimacion_pdf_url = url_for('main.download_file', filename=os.path.basename(output_pdf2_path), _external=True)
-        
-        pdf_reader1 = PdfReader(output_pdf1_path)
-        pdf_reader2 = PdfReader(output_pdf2_path)
-
-        print(f"📄 Páginas en Valoración PDF: {len(pdf_reader1.pages)}")
-        print(f"📄 Páginas en Estimación PDF: {len(pdf_reader2.pages)}")
-
-
-
-
-        # 🔟 Responder con ambos archivos generados
-        return jsonify({
-            "valoracion_pdf": url_for('main.download_file', filename=os.path.basename(output_pdf1_path), _external=True),
-            "estimacion_pdf": url_for('main.download_file', filename=os.path.basename(output_pdf2_path), _external=True)
-        })
-
-        
+        return send_file(
+            zip_buffer,
+            mimetype="application/zip",
+            as_attachment=True,
+            download_name=f"{sanitized_name}_documentos.zip"
+        )
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
