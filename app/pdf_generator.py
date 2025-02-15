@@ -211,7 +211,7 @@ def generate_pdf(request):
             zip_buffer,
             mimetype="application/zip",
             as_attachment=True,
-            download_name=f"{consecutivo_prefijo}_documentos.zip"
+            download_name=f"{consecutivo_prefijo}.zip"
         )
 
     except Exception as e:

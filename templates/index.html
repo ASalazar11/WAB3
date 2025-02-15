@@ -169,12 +169,19 @@
         function toggleEmpresaFields() {
             const condicion = document.getElementById('condicion').value;
             const empresaFields = document.getElementById('empresa_fields');
+            const cedulaEmpresa = document.getElementById('cedula_empresa');
+            const nombreEmpresa = document.getElementById('nombre_empresa');
+
             if (condicion === "apoderado") {
                 empresaFields.style.display = "block";
+                cedulaEmpresa.required = true;  // Activar validación solo cuando es apoderado
+                nombreEmpresa.required = true;
             } else {
                 empresaFields.style.display = "none";
-                document.getElementById('cedula_empresa').value = " ";
-                document.getElementById('nombre_empresa').value = " ";
+                cedulaEmpresa.value = ""; // Limpiar campo si no es "apoderado"
+                nombreEmpresa.value = "";
+                cedulaEmpresa.required = false; // Eliminar validación
+                nombreEmpresa.required = false;
             }
         }
 
@@ -343,7 +350,7 @@
 
         <!-- Formulario -->
         <form id="miFormulario" action="/generate_pdf" method="POST" class="bg-white p-4 rounded shadow">
-     
+
             <div class="row mb-3">
                 <div class="col-md-4">
                     <label for="aviso" class="form-label">Número de Caso/Aviso:</label>
@@ -503,13 +510,13 @@
                                 required>
                             <h6 class="card-title mt-4">Condición</h6>
                             <div class="dropdown">
-                                <select class="form-select" id="condicion" name="condicion"
-                                    onchange="toggleEmpresaFields()">
+                                <select id="condicion" name="condicion" class="form-select"
+                                    onchange="toggleEmpresaFields()" required>
                                     <option value="asegurado">Asegurado</option>
-                                    <option value="apoderado">Apoderado </option>
-                                    <option value="conductor">Conductor </option>
+                                    <option value="apoderado">Apoderado</option>
+                                    <option value="conductor">Conductor</option>
                                     <option value="propietario_registral">Propietario Registral</option>
-                                    <option value="otra_condicion">OTRA CONDICIÓN</option>
+                                    <option value="otra_condicion">Otra Condición</option>
                                 </select>
                             </div>
                             <div id="empresa_fields" style="display: none; margin-top: 15px;">
