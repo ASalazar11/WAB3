@@ -6,6 +6,8 @@ from reportlab.lib.pagesizes import letter
 from PyPDF2 import PdfReader, PdfWriter
 from app.utils import format_number, split_date
 from reportlab.pdfgen import canvas
+import os
+from pathlib import Path
 
 
 def resource_path(relative_path):
@@ -74,16 +76,22 @@ def generate_pdf(request):
         # Obtener la fecha actual para el nombre del archivo
         current_date = datetime.now().strftime("%Y-%m-%d")
         sanitized_name = "".join([c if c.isalnum() or c in " ._-()" else "_" for c in nombre_cliente])
-
-        # 3️⃣ Asegurar que la ruta de guardado exista
-        save_path = os.getenv("UPLOAD_FOLDER", "/opt/render/project/files/WABEDOCS")
-        if not os.path.exists(save_path):
-            os.makedirs(save_path, exist_ok=True)
-
-        # Crear carpeta del caso
+        
+          # Crear carpeta del caso
         case_number_folder = os.path.join(save_path, f"25-{form_data['consecutivo']}")
         if not os.path.exists(case_number_folder):
             os.makedirs(case_number_folder, exist_ok=True)
+        
+        # 📂 Obtener ruta de guardado según el sistema operativo
+        if os.name == "nt":  # Windows
+            save_path = os.path.join(os.environ["USERPROFILE"], "Downloads", "WABEDOCS")
+        else:  # Render u otro sistema basado en Linux
+            save_path = "/tmp/WABEDOCS"  # Almacenamiento temporal en Render
+
+        # Asegurar que la carpeta exista
+        os.makedirs(save_path, exist_ok=True)
+
+
 
         # 4️⃣ Definir rutas de salida para PDFs
         temp_pdf1_path = os.path.join(case_number_folder, "temp_valoracion.pdf")
@@ -192,6 +200,13 @@ def generate_pdf(request):
 
             with open(output_path, "wb") as output_file:
                 writer.write(output_file)
+                
+        # 🔍 Verificar si los archivos existen antes de devolver la respuesta
+        if not os.path.exists(output_pdf1_path):
+            print(f"❌ ERROR: El archivo {output_pdf1_path} no existe.")
+        if not os.path.exists(output_pdf2_path):
+            print(f"❌ ERROR: El archivo {output_pdf2_path} no existe.")
+
 
         # 6️⃣ Rutas de las plantillas PDF
         VALORACION_PDF_PATH = resource_path("pdfs/VALORACION.pdf")
@@ -215,6 +230,7 @@ def generate_pdf(request):
             "valoracion_pdf": valoracion_pdf_url,
             "estimacion_pdf": estimacion_pdf_url
         })
+        
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500

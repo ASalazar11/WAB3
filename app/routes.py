@@ -19,5 +19,9 @@ def generate_pdf_route():
 
 @main.route("/download/<filename>")
 def download_file(filename):
-    save_path = os.getenv("UPLOAD_FOLDER", "/opt/render/project/files/WABEDOCS")
+    if os.name == "nt":  # Windows
+        save_path = os.path.join(os.environ["USERPROFILE"], "Downloads", "WABEDOCS")
+    else:  # Render
+        save_path = "/tmp/WABEDOCS"
+
     return send_from_directory(save_path, filename, as_attachment=True)
