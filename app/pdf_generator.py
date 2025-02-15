@@ -192,6 +192,16 @@ def generate_pdf(request):
         if not os.path.exists(temp_pdf1_path) or not os.path.exists(temp_pdf2_path):
             return jsonify({"error": "Uno de los archivos PDF temporales no se generó correctamente."}), 500
 
+        
+        # 🔹 Rutas de las plantillas PDF
+        VALORACION_PDF_PATH = resource_path("pdfs/VALORACION.pdf")
+        ESTIMACION_PDF_PATH = resource_path("pdfs/ESTIMACION.pdf")
+        
+        print("📂 Revisando si existen las plantillas PDF:")
+        print(f"VALORACION.pdf existe: {os.path.exists(VALORACION_PDF_PATH)}")
+        print(f"ESTIMACION.pdf existe: {os.path.exists(ESTIMACION_PDF_PATH)}")
+
+
 
         def combine_pdfs(template_path, temp_pdf_path, output_path):
             print(f"🛠️ Combinando PDFs: {template_path} + {temp_pdf_path} → {output_path}")
@@ -231,11 +241,6 @@ def generate_pdf(request):
         else:
             print(f"❌ ERROR: El archivo {output_pdf2_path} no existe DESPUÉS de combinar PDFs.")
 
-
-
-        # 6️⃣ Rutas de las plantillas PDF
-        VALORACION_PDF_PATH = resource_path("pdfs/VALORACION.pdf")
-        ESTIMACION_PDF_PATH = resource_path("pdfs/ESTIMACION.pdf")
 
         # 7️⃣ Combinar los PDFs con las plantillas
         combine_pdfs(VALORACION_PDF_PATH, temp_pdf1_path, output_pdf1_path)
