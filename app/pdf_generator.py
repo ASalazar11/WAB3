@@ -217,10 +217,20 @@ def generate_pdf(request):
 
                 
         # 🔍 Verificar si los archivos existen antes de devolver la respuesta
-        if not os.path.exists(output_pdf1_path):
-            print(f"❌ ERROR: El archivo {output_pdf1_path} no existe.")
-        if not os.path.exists(output_pdf2_path):
-            print(f"❌ ERROR: El archivo {output_pdf2_path} no existe.")
+        combine_pdfs(VALORACION_PDF_PATH, temp_pdf1_path, output_pdf1_path)
+        combine_pdfs(ESTIMACION_PDF_PATH, temp_pdf2_path, output_pdf2_path)
+
+        # Verificar después de la combinación
+        if os.path.exists(output_pdf1_path):
+            print(f"✅ Archivo final PDF1 generado correctamente: {output_pdf1_path}")
+        else:
+            print(f"❌ ERROR: El archivo {output_pdf1_path} no existe DESPUÉS de combinar PDFs.")
+
+        if os.path.exists(output_pdf2_path):
+            print(f"✅ Archivo final PDF2 generado correctamente: {output_pdf2_path}")
+        else:
+            print(f"❌ ERROR: El archivo {output_pdf2_path} no existe DESPUÉS de combinar PDFs.")
+
 
 
         # 6️⃣ Rutas de las plantillas PDF
