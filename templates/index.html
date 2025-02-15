@@ -328,21 +328,6 @@
 
     <div class="container my-5">
 
-
-        <div class="mb-3">
-            <label for="folderPath" class="form-label">Selecciona la Carpeta de Guardado:</label>
-            <div class="input-group">
-                <input type="text" id="folderPath" class="form-control" placeholder="Ruta seleccionada" readonly>
-                <button id="selectFolder" class="btn btn-primary">📂 Seleccionar Carpeta</button>
-            </div>
-        </div>
-
-        <input type="text" id="folderPath" class="form-control" placeholder="Ingresa la ruta manualmente">
-
-        <p id="errorMessage" class="text-danger"></p>
-
-        <p id="selectedFolderMessage" class="mt-2"></p>
-
         <!-- Logo en lugar del título -->
         <div class="text-center mb-4">
             <img src="https://tallerwabe.com/wp-content/uploads/2018/11/wabe-logo.png" alt="Logo Wabe" class="img-fluid"
@@ -358,7 +343,7 @@
 
         <!-- Formulario -->
         <form id="miFormulario" action="/generate_pdf" method="POST" class="bg-white p-4 rounded shadow">
-            <!-- Primer Row: Número de Caso/Aviso, Consecutivo y Opción -->
+     
             <div class="row mb-3">
                 <div class="col-md-4">
                     <label for="aviso" class="form-label">Número de Caso/Aviso:</label>

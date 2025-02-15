@@ -90,7 +90,9 @@ def generate_pdf(request):
         nombre_empresa = form_data["nombre_empresa"]
 
         # Obtener la fecha actual para el nombre del archivo
+        consecutivo_prefijo = f"25-{form_data['consecutivo']}"
         sanitized_name = "".join([c if c.isalnum() or c in " ._-()" else "_" for c in nombre_cliente])
+
 
         # ✅ 2️⃣ Cargar las plantillas
         VALORACION_PDF_PATH = "pdfs/VALORACION.pdf"
@@ -199,8 +201,9 @@ def generate_pdf(request):
         # ✅ 5️⃣ Enviar los archivos en un ZIP
         zip_buffer = io.BytesIO()
         with zipfile.ZipFile(zip_buffer, "w") as zip_file:
-            zip_file.writestr(f"{sanitized_name}_valoracion.pdf", pdf1_final.getvalue())
-            zip_file.writestr(f"{sanitized_name}_estimacion.pdf", pdf2_final.getvalue())
+            zip_file.writestr(f"{consecutivo_prefijo}_VALORACION_{sanitized_name}.pdf", pdf1_final.getvalue())
+            zip_file.writestr(f"{consecutivo_prefijo}_ESTIMACION_{sanitized_name}.pdf", pdf2_final.getvalue())
+
 
         zip_buffer.seek(0)
 
@@ -208,7 +211,7 @@ def generate_pdf(request):
             zip_buffer,
             mimetype="application/zip",
             as_attachment=True,
-            download_name=f"{sanitized_name}_documentos.zip"
+            download_name=f"{consecutivo_prefijo}_documentos.zip"
         )
 
     except Exception as e:
