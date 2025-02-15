@@ -81,7 +81,8 @@ def generate_pdf(request):
         if os.name == "nt":  # Windows
             save_path = os.path.join(os.environ["USERPROFILE"], "Downloads", "WABEDOCS")
         else:  # Linux (Render)
-            save_path = "/tmp/WABEDOCS"
+            save_path = "/opt/render/project/tmp/WABEDOCS"
+
 
         os.makedirs(save_path, exist_ok=True)  # Asegurar que exista la carpeta
 
@@ -192,8 +193,9 @@ def generate_pdf(request):
             return jsonify({"error": "Uno de los archivos PDF temporales no se generó correctamente."}), 500
 
 
-        # 5️⃣ Función para combinar PDFs con plantillas
         def combine_pdfs(template_path, temp_pdf_path, output_path):
+            print(f"🛠️ Combinando PDFs: {template_path} + {temp_pdf_path} → {output_path}")
+        
             template_pdf = PdfReader(template_path)
             temp_pdf = PdfReader(temp_pdf_path)
             writer = PdfWriter()
@@ -204,11 +206,14 @@ def generate_pdf(request):
                     template_page.merge_page(temp_pdf.pages[0])
                 writer.add_page(template_page)
 
-            with open(output_path, "wb") as output_file:
-                writer.write(output_file)
-                
-        print(f"✅ Archivo final PDF1 generado: {output_pdf1_path}")  
-        print(f"✅ Archivo final PDF2 generado: {output_pdf2_path}")  
+            # 🛠️ Intentar escribir el archivo y verificar errores
+            try:
+                with open(output_path, "wb") as output_file:
+                    writer.write(output_file)
+                print(f"✅ PDF combinado generado: {output_path}")
+            except Exception as e:
+                print(f"❌ ERROR al escribir el archivo PDF combinado: {str(e)}")
+
 
                 
         # 🔍 Verificar si los archivos existen antes de devolver la respuesta
