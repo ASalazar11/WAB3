@@ -1,27 +1,27 @@
 import os
-import sys  # 🔹 Se agregó sys porque `resource_path()` lo usa
+import sys  
 from flask import jsonify, request, url_for
 from datetime import datetime
 from reportlab.lib.pagesizes import letter
 from PyPDF2 import PdfReader, PdfWriter
 from app.utils import format_number, split_date
 from reportlab.pdfgen import canvas
-import os
-from pathlib import Path
+
+
 
 
 def resource_path(relative_path):
     """Retorna la ruta absoluta compatible con PyInstaller y Render."""
     try:
-        base_path = sys._MEIPASS  # Para PyInstaller
+        base_path = sys._MEIPASS  
     except Exception:
         base_path = os.path.abspath(".")
     return os.path.join(base_path, relative_path)
 
-
 def generate_pdf(request):
     try:
-        # 1️⃣ Verificar si los campos requeridos están presentes
+        
+        # ✅ 1️⃣ Verificar que todos los datos requeridos están presentes
         required_fields = [
             "aviso", "consecutivo", "opcion", "cedula", "nombre", "telefono",
             "correo", "fecha_evento", "fecha_ingreso", "placa", "marca", "modelo",
@@ -36,7 +36,7 @@ def generate_pdf(request):
             if not value:
                 return jsonify({"error": f"El campo {field} está vacío."}), 400
 
-        # 2️⃣ Extraer y formatear datos
+     
         aviso = form_data["aviso"]
         consecutivo = form_data["consecutivo"]
         opcion = form_data["opcion"]
@@ -77,20 +77,16 @@ def generate_pdf(request):
         current_date = datetime.now().strftime("%Y-%m-%d")
         sanitized_name = "".join([c if c.isalnum() or c in " ._-()" else "_" for c in nombre_cliente])
         
-          # Crear carpeta del caso
-        case_number_folder = os.path.join(save_path, f"25-{form_data['consecutivo']}")
-        if not os.path.exists(case_number_folder):
-            os.makedirs(case_number_folder, exist_ok=True)
         
-        # 📂 Obtener ruta de guardado según el sistema operativo
         if os.name == "nt":  # Windows
             save_path = os.path.join(os.environ["USERPROFILE"], "Downloads", "WABEDOCS")
-        else:  # Render u otro sistema basado en Linux
-            save_path = "/tmp/WABEDOCS"  # Almacenamiento temporal en Render
+        else:  # Linux (Render)
+            save_path = "/tmp/WABEDOCS"
 
-        # Asegurar que la carpeta exista
-        os.makedirs(save_path, exist_ok=True)
+        os.makedirs(save_path, exist_ok=True)  # Asegurar que exista la carpeta
 
+        case_number_folder = os.path.join(save_path, f"25-{form_data['consecutivo']}")
+        os.makedirs(case_number_folder, exist_ok=True)
 
 
         # 4️⃣ Definir rutas de salida para PDFs
@@ -191,6 +187,10 @@ def generate_pdf(request):
         
         print(f"✅ Archivo temp PDF2 generado: {temp_pdf2_path}")  # Después de c2.save()
         sys.stdout.flush()
+        
+        if not os.path.exists(temp_pdf1_path) or not os.path.exists(temp_pdf2_path):
+            return jsonify({"error": "Uno de los archivos PDF temporales no se generó correctamente."}), 500
+
 
         # 5️⃣ Función para combinar PDFs con plantillas
         def combine_pdfs(template_path, temp_pdf_path, output_path):
@@ -234,16 +234,21 @@ def generate_pdf(request):
         valoracion_pdf_url = url_for('main.download_file', filename=os.path.basename(output_pdf1_path), _external=True)
         estimacion_pdf_url = url_for('main.download_file', filename=os.path.basename(output_pdf2_path), _external=True)
         
-        print(f"📄 Páginas en temp PDF1: {len(temp_pdf1.pages)}")
-        print(f"📄 Páginas en temp PDF2: {len(temp_pdf2.pages)}")
+        pdf_reader1 = PdfReader(output_pdf1_path)
+        pdf_reader2 = PdfReader(output_pdf2_path)
+
+        print(f"📄 Páginas en Valoración PDF: {len(pdf_reader1.pages)}")
+        print(f"📄 Páginas en Estimación PDF: {len(pdf_reader2.pages)}")
+
 
 
 
         # 🔟 Responder con ambos archivos generados
         return jsonify({
-            "valoracion_pdf": valoracion_pdf_url,
-            "estimacion_pdf": estimacion_pdf_url
+            "valoracion_pdf": url_for('main.download_file', filename=os.path.basename(output_pdf1_path), _external=True),
+            "estimacion_pdf": url_for('main.download_file', filename=os.path.basename(output_pdf2_path), _external=True)
         })
+
         
 
     except Exception as e:
