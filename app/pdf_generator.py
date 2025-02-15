@@ -136,6 +136,7 @@ def generate_pdf(request):
         c1.save()
         
         print(f"✅ Archivo temp PDF1 generado: {temp_pdf1_path}")  # Después de c1.save()
+        sys.stdout.flush()
 
         # --- Generar Segundo PDF (Estimación) ---
         c2 = canvas.Canvas(temp_pdf2_path, pagesize=letter)
@@ -189,6 +190,7 @@ def generate_pdf(request):
         c2.save()
         
         print(f"✅ Archivo temp PDF2 generado: {temp_pdf2_path}")  # Después de c2.save()
+        sys.stdout.flush()
 
         # 5️⃣ Función para combinar PDFs con plantillas
         def combine_pdfs(template_path, temp_pdf_path, output_path):
