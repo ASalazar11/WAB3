@@ -206,8 +206,9 @@ def generate_pdf(request):
         os.remove(temp_pdf2_path)
 
         # 9️⃣ Generar URLs limpias para los PDFs generados
-        valoracion_pdf_url = url_for('download_file', filename=os.path.basename(output_pdf1_path), _external=True)
-        estimacion_pdf_url = url_for('download_file', filename=os.path.basename(output_pdf2_path), _external=True)
+        valoracion_pdf_url = url_for('main.download_file', filename=os.path.basename(output_pdf1_path), _external=True)
+        estimacion_pdf_url = url_for('main.download_file', filename=os.path.basename(output_pdf2_path), _external=True)
+
 
         # 🔟 Responder con ambos archivos generados
         return jsonify({
