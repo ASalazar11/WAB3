@@ -169,21 +169,14 @@
         function toggleEmpresaFields() {
             const condicion = document.getElementById('condicion').value;
             const empresaFields = document.getElementById('empresa_fields');
-            const cedulaEmpresa = document.getElementById('cedula_empresa');
-            const nombreEmpresa = document.getElementById('nombre_empresa');
 
             if (condicion === "apoderado") {
                 empresaFields.style.display = "block";
-                cedulaEmpresa.required = true;  // Activar validación solo cuando es apoderado
-                nombreEmpresa.required = true;
             } else {
                 empresaFields.style.display = "none";
-                cedulaEmpresa.value = ""; // Limpiar campo si no es "apoderado"
-                nombreEmpresa.value = "";
-                cedulaEmpresa.required = false; // Eliminar validación
-                nombreEmpresa.required = false;
             }
         }
+
 
         function checkServerStatus() {
             fetch("/ping")
@@ -526,6 +519,7 @@
                                 <label for="cedula_empresa" class="form-label">Cédula de la Empresa:</label>
                                 <input type="text" id="cedula_empresa" name="cedula_empresa" class="form-control"
                                     value=" ">
+
                                 <label for="nombre_empresa" class="form-label mt-2">Nombre de la Empresa:</label>
                                 <input type="text" id="nombre_empresa" name="nombre_empresa" class="form-control"
                                     value=" ">
