@@ -1,10 +1,38 @@
-import sys  
+import sys
 import io
+import zipfile
 from flask import jsonify, request, send_file
 from datetime import datetime
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
 from app.utils import format_number, split_date
+from PyPDF2 import PdfReader, PdfWriter
+
+
+def merge_pdfs(template_pdf_path, generated_pdf):
+    output_buffer = io.BytesIO()
+    writer = PdfWriter()
+
+    # Leer la plantilla PDF desde el archivo
+    template_reader = PdfReader(template_pdf_path)
+
+    # Cargar la página de la plantilla sin modificarla
+    template_page = template_reader.pages[0]  
+
+    # Cargar el PDF generado en memoria
+    generated_pdf.seek(0)
+    generated_reader = PdfReader(generated_pdf)
+
+    # Fusionar la plantilla con el PDF generado
+    template_page.merge_page(generated_reader.pages[0])
+
+    # Agregar la página fusionada al nuevo PDF
+    writer.add_page(template_page)
+
+    # Guardar el PDF final en memoria
+    writer.write(output_buffer)
+    output_buffer.seek(0)
+    return output_buffer
 
 
 def generate_pdf(request):
@@ -64,7 +92,11 @@ def generate_pdf(request):
         # Obtener la fecha actual para el nombre del archivo
         sanitized_name = "".join([c if c.isalnum() or c in " ._-()" else "_" for c in nombre_cliente])
 
-        # ✅ 2️⃣ Generar Primer PDF (Valoración)
+        # ✅ 2️⃣ Cargar las plantillas
+        VALORACION_PDF_PATH = "pdfs/VALORACION.pdf"
+        ESTIMACION_PDF_PATH = "pdfs/ESTIMACION.pdf"
+
+        # ✅ 3️⃣ Generar Primer PDF (Valoración)
         pdf1_buffer = io.BytesIO()
         c1 = canvas.Canvas(pdf1_buffer, pagesize=letter)
 
@@ -99,10 +131,14 @@ def generate_pdf(request):
         c1.drawString(300, 398, f"{telefono_responsable}")
         c1.drawString(115, 398, f"{cedula_responsable}")
         c1.drawString(300, 415, f"{correo_responsable}")
+
         c1.save()
+        pdf1_buffer.seek(0)
 
+        # Fusionar con la plantilla
+        pdf1_final = merge_pdfs(VALORACION_PDF_PATH, pdf1_buffer)
 
-        # ✅ 3️⃣ Generar Segundo PDF (Estimación)
+        # ✅ 4️⃣ Generar Segundo PDF (Estimación)
         pdf2_buffer = io.BytesIO()
         c2 = canvas.Canvas(pdf2_buffer, pagesize=letter)
 
@@ -153,20 +189,18 @@ def generate_pdf(request):
         c2.drawString(79, 479, f"WABE CARROCERIA Y PINTURA S.A.")
         c2.drawString(425, 479, f"3-101-085331")
 
+
         c2.save()
-
-
-        # ✅ 4️⃣ Mover punteros al inicio
-        pdf1_buffer.seek(0)
         pdf2_buffer.seek(0)
 
-        # ✅ 5️⃣ Enviar los archivos ZIP
-        import zipfile
-        zip_buffer = io.BytesIO()
+        # Fusionar con la plantilla
+        pdf2_final = merge_pdfs(ESTIMACION_PDF_PATH, pdf2_buffer)
 
+        # ✅ 5️⃣ Enviar los archivos en un ZIP
+        zip_buffer = io.BytesIO()
         with zipfile.ZipFile(zip_buffer, "w") as zip_file:
-            zip_file.writestr(f"{sanitized_name}_valoracion.pdf", pdf1_buffer.getvalue())
-            zip_file.writestr(f"{sanitized_name}_estimacion.pdf", pdf2_buffer.getvalue())
+            zip_file.writestr(f"{sanitized_name}_valoracion.pdf", pdf1_final.getvalue())
+            zip_file.writestr(f"{sanitized_name}_estimacion.pdf", pdf2_final.getvalue())
 
         zip_buffer.seek(0)
 
