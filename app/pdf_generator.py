@@ -94,15 +94,7 @@ def generate_pdf(request):
         # Si están vacíos, se asigna "N/A" en lugar de None o string vacío
         cedula_empresa = format_number(form_data.get("cedula_empresa", ""), is_cedula=True)
         
-        if form_data.get("nombre_empresa", "").strip() == "." or "":
-            nombre_empresa = format_number(form_data.get("nombre_empresa", ""), genera_vacio=True)
-        else:
-            nombre_empresa = format_number(form_data.get("nombre_empresa", ""), genera_vacio=False)
-
-
-
-
-
+        nombre_empresa = form_data.get("nombre_empresa")
 
         # Obtener la fecha actual para el nombre del archivo
         consecutivo_prefijo = f"25-{form_data['consecutivo']}"
@@ -179,9 +171,9 @@ def generate_pdf(request):
         c2.drawString(495, 142, f"{mes_ingreso}")
         c2.drawString(550, 142, f"{anio_ingreso}")
         
-        
-        c2.drawString(70, 565, f"{cedula_empresa}")
-        c2.drawString(145, 565, f"{nombre_empresa}")
+        if form_data.get("nombre_empresa", "").strip() != ".":
+            c2.drawString(70, 565, f"{cedula_empresa}")
+            c2.drawString(145, 565, f"{nombre_empresa}")
 
         # Agregar condición
         condicion = form_data["condicion"]

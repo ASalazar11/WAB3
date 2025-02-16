@@ -16,8 +16,7 @@ def format_number(value, is_cedula=False,genera_vacio=False):
 
     value = value.strip()
     
-    if genera_vacio and not value:
-        return " "
+
 
     if is_cedula:
         if len(value) == 9:  # Cédula física
