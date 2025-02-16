@@ -93,7 +93,11 @@ def generate_pdf(request):
 
         # Si están vacíos, se asigna "N/A" en lugar de None o string vacío
         cedula_empresa = format_number(form_data.get("cedula_empresa", ""), is_cedula=True)
-        nombre_empresa = format_number(form_data.get("nombre_empresa", ""), genera_vacio=True)
+        
+        genera_vacio_flag = True if form_data.get("nombre_empresa", "").strip() == "." else False
+
+        nombre_empresa = format_number(form_data.get("nombre_empresa", ""), genera_vacio=genera_vacio_flag)
+
 
 
 
