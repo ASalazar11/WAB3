@@ -12,7 +12,7 @@ def format_number(value, is_cedula=False):
     """Formatea un número de teléfono o cédula con guiones según corresponda."""
     
     if not value or not value.strip().isdigit():
-        return "Número inválido"  # 🔹 Mensaje uniforme para valores no numéricos
+        return " "  # 🔹 Mensaje uniforme para valores no numéricos
 
     value = value.strip()
 
@@ -23,9 +23,9 @@ def format_number(value, is_cedula=False):
             return f"{value[:1]}-{value[1:4]}-{value[4:]}"
         elif len(value) in [11, 12]:  # DIMEX
             return value
-        return "Cédula inválida"
+        return " "
     
     # Teléfono
     if len(value) == 8:
         return f"{value[:4]}-{value[4:]}"
-    return "Teléfono inválido"
+    return " "
