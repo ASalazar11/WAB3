@@ -8,13 +8,16 @@ def split_date(date_str):
     except ValueError:
         return " ", " ", " "  # Si la fecha no es válida, devolver espacios
 
-def format_number(value, is_cedula=False):
+def format_number(value, is_cedula=False,genera_vacio=False):
     """Formatea un número de teléfono o cédula con guiones según corresponda."""
     
     if not value or not value.strip().isdigit():
         return " "  # 🔹 Mensaje uniforme para valores no numéricos
 
     value = value.strip()
+    
+    if genera_vacio and not value:
+        return " "
 
     if is_cedula:
         if len(value) == 9:  # Cédula física
