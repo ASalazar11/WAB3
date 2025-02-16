@@ -86,14 +86,14 @@ def generate_pdf(request):
         distrito = form_data["distrito"]
 
         # Datos de la empresa (si aplica)
-        # Datos de la empresa (si aplica)
-        # Datos de la empresa (si aplica)
+      
+       # Datos de la empresa (si aplica)
         cedula_empresa = form_data.get("cedula_empresa", "").strip()
         nombre_empresa = form_data.get("nombre_empresa", "").strip()
 
-        # Si el valor es vacío, lo convertimos en None
-        cedula_empresa = format_number(cedula_empresa if cedula_empresa else None, is_cedula=True)
-        nombre_empresa = nombre_empresa if nombre_empresa else None
+        # Si están vacíos, se asigna "N/A" en lugar de None o string vacío
+        cedula_empresa = format_number(cedula_empresa if cedula_empresa else "N/A", is_cedula=True)
+        nombre_empresa = nombre_empresa if nombre_empresa else "N/A"
 
 
 
