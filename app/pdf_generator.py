@@ -86,8 +86,10 @@ def generate_pdf(request):
         distrito = form_data["distrito"]
 
         # Datos de la empresa (si aplica)
-        cedula_empresa = format_number(form_data["cedula_empresa"], is_cedula=True)
-        nombre_empresa = form_data["nombre_empresa"]
+        # Datos de la empresa (si aplica)
+        cedula_empresa = format_number(form_data.get("cedula_empresa") or None, is_cedula=True)
+        nombre_empresa = form_data.get("nombre_empresa") or None
+
 
         # Obtener la fecha actual para el nombre del archivo
         consecutivo_prefijo = f"25-{form_data['consecutivo']}"

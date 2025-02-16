@@ -165,17 +165,23 @@
                 });
         }
 
-
         function toggleEmpresaFields() {
             const condicion = document.getElementById('condicion').value;
             const empresaFields = document.getElementById('empresa_fields');
+            const cedulaEmpresa = document.getElementById('cedula_empresa');
+            const nombreEmpresa = document.getElementById('nombre_empresa');
 
             if (condicion === "apoderado") {
                 empresaFields.style.display = "block";
             } else {
                 empresaFields.style.display = "none";
+
+                // Asegurar que los valores sean nulos si la opción no es "apoderado"
+                cedulaEmpresa.value = "";
+                nombreEmpresa.value = "";
             }
         }
+
 
 
         function checkServerStatus() {
@@ -503,7 +509,8 @@
                                 required>
                             <h6 for="condicion" class="form-label">Condición:</h6>
                             <div class="dropdown">
-                                <select id="condicion" name="condicion" class="form-select" onchange="toggleEmpresaFields()" required>
+                                <select id="condicion" name="condicion" class="form-select"
+                                    onchange="toggleEmpresaFields()" required>
                                     <option value="asegurado">Asegurado</option>
                                     <option value="apoderado">Apoderado</option>
                                     <option value="conductor">Conductor</option>
@@ -516,12 +523,10 @@
                                     onclick="copiarAlResponsableEmpresa()">Copiar a la Empresa</button>
                                 <hr>
                                 <label for="cedula_empresa" class="form-label">Cédula de la Empresa:</label>
-                                <input type="text" id="cedula_empresa" name="cedula_empresa" class="form-control"
-                                    value=" ">
+                                <input type="text" id="cedula_empresa" name="cedula_empresa" class="form-control">
 
                                 <label for="nombre_empresa" class="form-label mt-2">Nombre de la Empresa:</label>
-                                <input type="text" id="nombre_empresa" name="nombre_empresa" class="form-control"
-                                    value=" ">
+                                <input type="text" id="nombre_empresa" name="nombre_empresa" class="form-control">
                             </div>
                         </div>
 
