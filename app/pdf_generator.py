@@ -87,8 +87,14 @@ def generate_pdf(request):
 
         # Datos de la empresa (si aplica)
         # Datos de la empresa (si aplica)
-        cedula_empresa = format_number(form_data.get("cedula_empresa") or None, is_cedula=True)
-        nombre_empresa = form_data.get("nombre_empresa") or None
+        # Datos de la empresa (si aplica)
+        cedula_empresa = form_data.get("cedula_empresa", "").strip()
+        nombre_empresa = form_data.get("nombre_empresa", "").strip()
+
+        # Si el valor es vacío, lo convertimos en None
+        cedula_empresa = format_number(cedula_empresa if cedula_empresa else None, is_cedula=True)
+        nombre_empresa = nombre_empresa if nombre_empresa else None
+
 
 
         # Obtener la fecha actual para el nombre del archivo
