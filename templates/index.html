@@ -165,22 +165,7 @@
                 });
         }
 
-        function toggleEmpresaFields() {
-            const condicion = document.getElementById('condicion').value;
-            const empresaFields = document.getElementById('empresa_fields');
-            const cedulaEmpresa = document.getElementById('cedula_empresa');
-            const nombreEmpresa = document.getElementById('nombre_empresa');
-
-            if (condicion === "apoderado") {
-                empresaFields.style.display = "block";
-            } else {
-                empresaFields.style.display = "none";
-
-                // Asegurar que los valores sean nulos si la opción no es "apoderado"
-                cedulaEmpresa.value = "";
-                nombreEmpresa.value = "";
-            }
-        }
+      
 
 
 
@@ -350,12 +335,32 @@
         function toggleDoblePersonaJuridica() {
             const checkbox = document.getElementById("doblePersonaJuridica");
             const fields = document.getElementById("doblePersonaJuridicaFields");
+
+            const cedulajuridica2 = document.getElementById('cedula_juridica_2');
+            const nombrejuridico2 = document.getElementById('nombre_juridico_2');
+
             if (checkbox.checked) {
                 fields.style.display = "block";
             } else {
                 fields.style.display = "none";
-                document.getElementById("cedula_juridica_2").value = ".";
-                document.getElementById("nombre_juridico_2").value = ".";
+                cedulajuridica2.value = "";
+                nombrejuridico2.value = "";
+            }
+        }
+
+        function toggleEmpresaFields() {
+            const condicion = document.getElementById('condicion').value;
+            const empresaFields = document.getElementById('empresa_fields');
+            const cedulaEmpresa = document.getElementById('cedula_empresa');
+            const nombreEmpresa = document.getElementById('nombre_empresa');
+
+            if (condicion === "apoderado") {
+                empresaFields.style.display = "block";
+            } else {
+                empresaFields.style.display = "none";
+
+                cedulaEmpresa.value = "";
+                nombreEmpresa.value = "";
             }
         }
 
