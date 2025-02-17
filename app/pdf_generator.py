@@ -44,7 +44,7 @@ def generate_pdf(request):
             "anio", "color", "asesor", "cedula_asesor",
             "cedula_responsable", "nombre_responsable", "correo_responsable", "telefono_responsable",
             "condicion", "provincia", "canton", "distrito", "cedula_empresa", "nombre_empresa",
-            "cedula_estimacion", "nombre_estimacion","nombre_juridico_2","cedula_juridico_2"
+            "cedula_estimacion", "nombre_estimacion",
         ]
 
         form_data = {field: request.form.get(field, "").strip() for field in required_fields}
