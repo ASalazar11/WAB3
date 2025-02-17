@@ -44,7 +44,7 @@ def generate_pdf(request):
             "anio", "color", "asesor", "cedula_asesor",
             "cedula_responsable", "nombre_responsable", "correo_responsable", "telefono_responsable",
             "condicion", "provincia", "canton", "distrito", "cedula_empresa", "nombre_empresa",
-            "cedula_estimacion", "nombre_estimacion"
+            "cedula_estimacion", "nombre_estimacion","nombre_juridico_2","cedula_juridico_2"
         ]
 
         form_data = {field: request.form.get(field, "").strip() for field in required_fields}
@@ -79,6 +79,10 @@ def generate_pdf(request):
         telefono_responsable = format_number(form_data["telefono_responsable"])
         cedula_estimacion = format_number(form_data["cedula_estimacion"], is_cedula=True)
         nombre_estimacion = form_data["nombre_estimacion"]
+        
+        #Segundas Personas Juridicas 
+        CedulaJuridica2 = form_data["cedula_juridico_2"]
+        NombreJuridica2 = form_data["nombre_juridico_2"]
 
         # Datos de ubicación
         provincia = form_data["provincia"]
@@ -117,8 +121,10 @@ def generate_pdf(request):
         c1.drawString(140, 605, f"{aviso}")
         c1.drawString(445, 605, f"INS")
         c1.drawString(450, 550, f"{opcion}")
+        
         c1.drawString(380, 480, f"{cedula_cliente}")
         c1.drawString(75, 480, f"{nombre_cliente}")
+        
         c1.drawString(420, 525, f"{fecha_evento}")
         c1.drawString(185, 525, f"{fecha_ingreso}")
         c1.drawString(85, 270, f"{marca}")
@@ -132,6 +138,11 @@ def generate_pdf(request):
 
         c1.setFont("Helvetica-Bold", 9)
         c1.drawString(355, 580, f"{asesor}")
+        
+        if form_data.get("nombre_juridico_2", "").strip() != ".":
+            c1.drawString(380,500,f"{CedulaJuridica2}")
+            c1.drawString(75,500,f"{NombreJuridica2}")
+        
 
         # Incluir datos del responsable
         c1.setFont("Helvetica-Bold", 8)
