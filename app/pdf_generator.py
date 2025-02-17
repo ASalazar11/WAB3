@@ -82,8 +82,9 @@ def generate_pdf(request):
         
         #Segundas Personas Juridicas 
         # Obtener valores del formulario asegurando que no sean None
-        CedulaJuridica2 = form_data.get("cedula_juridica_2", ".").strip()
+        CedulaJuridica2 = format_number(form_data.get("cedula_juridica_2", ".").strip(), is_cedula=True)
         NombreJuridica2 = form_data.get("nombre_juridico_2", ".").strip()
+
 
 
         # Datos de ubicación
@@ -142,6 +143,7 @@ def generate_pdf(request):
         c1.drawString(355, 580, f"{asesor}")
         
         if form_data.get("cedula_juridica_2", "").strip() != ".":
+            c1.setFont("Helvetica-Bold", 12)
             c1.drawString(380, 460, CedulaJuridica2)
             c1.drawString(75, 460, NombreJuridica2)
 
