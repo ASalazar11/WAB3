@@ -165,7 +165,7 @@
                 });
         }
 
-      
+
 
 
 
@@ -191,29 +191,6 @@
 
         // Ejecutar la verificación al cargar la página
         checkServerStatus();
-
-        function validarRuta() {
-            fetch("/verificar_ruta")
-                .then(response => response.json())
-                .then(data => {
-                    const mensaje = document.getElementById("pathValidationMessage");
-                    if (data.exists) {
-                        mensaje.textContent = data.message;
-                        mensaje.classList.remove("text-danger");
-                        mensaje.classList.add("text-success");
-                    } else {
-                        mensaje.textContent = data.message;
-                        mensaje.classList.remove("text-success");
-                        mensaje.classList.add("text-danger");
-                    }
-                })
-                .catch(error => {
-                    console.error("Error al verificar la ruta:", error);
-                    document.getElementById("pathValidationMessage").textContent = "⚠ Error en la validación.";
-                });
-        }
-
-        cedula_juridica_2
 
         function obtenerNombreJuridica_2() {
             const cedulaCliente = document.getElementById('cedula_juridica_2').value.trim();
@@ -336,17 +313,22 @@
             const checkbox = document.getElementById("doblePersonaJuridica");
             const fields = document.getElementById("doblePersonaJuridicaFields");
 
-            const cedulajuridica2 = document.getElementById('cedula_juridica_2');
-            const nombrejuridico2 = document.getElementById('nombre_juridico_2');
+            const cedulaJuridica2 = document.getElementById("cedula_juridica_2");
+            const nombreJuridico2 = document.getElementById("nombre_juridico_2");
 
             if (checkbox.checked) {
                 fields.style.display = "block";
             } else {
                 fields.style.display = "none";
-                cedulajuridica2.value = "";
-                nombrejuridico2.value = "";
+
+                // Al desmarcar, asigna "." como valor para evitar problemas en el backend
+                cedulaJuridica2.value = ".";
+                nombreJuridico2.value = ".";
             }
         }
+
+
+
 
         function toggleEmpresaFields() {
             const condicion = document.getElementById('condicion').value;
@@ -453,12 +435,14 @@
                     <div id="doblePersonaJuridicaFields" style="display: none; margin-top: 10px;">
                         <label for="cedula_juridica_2" class="form-label">Cédula Jurídica 2:</label>
                         <div class="input-group">
-                            <input type="text" id="cedula_juridica_2" name="cedula_juridica_2" class="form-control" value=".">
+                            <input type="text" id="cedula_juridica_2" name="cedula_juridica_2" class="form-control"
+                                value=".">
                             <button type="button" class="btn btn-outline-secondary"
                                 onclick="obtenerNombreJuridica_2('cedula_juridica_2')">Buscar</button>
                         </div>
                         <label for="nombre_juridico_2" class="form-label mt-2">Nombre Jurídico 2:</label>
-                        <input type="text" id="nombre_juridico_2" name="nombre_juridico_2" class="form-control" value=".">
+                        <input type="text" id="nombre_juridico_2" name="nombre_juridico_2" class="form-control"
+                            value=".">
 
                     </div>
 
