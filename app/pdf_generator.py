@@ -44,7 +44,7 @@ def generate_pdf(request):
             "anio", "color", "asesor", "cedula_asesor",
             "cedula_responsable", "nombre_responsable", "correo_responsable", "telefono_responsable",
             "condicion", "provincia", "canton", "distrito", "cedula_empresa", "nombre_empresa",
-            "cedula_estimacion", "nombre_estimacion",
+            "cedula_estimacion", "nombre_estimacion","cedula_juridica_2","nombre_juridica_2"
         ]
 
         form_data = {field: request.form.get(field, "").strip() for field in required_fields}
@@ -141,7 +141,7 @@ def generate_pdf(request):
         c1.setFont("Helvetica-Bold", 9)
         c1.drawString(355, 580, f"{asesor}")
         
-        if CedulaJuridica2 != "." and NombreJuridica2 != ".":
+        if form_data.get("cedula_juridica_2", "").strip() != ".":
             c1.drawString(380, 500, CedulaJuridica2)
             c1.drawString(75, 500, NombreJuridica2)
 
