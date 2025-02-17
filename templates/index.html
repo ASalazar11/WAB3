@@ -313,19 +313,18 @@
             const checkbox = document.getElementById("doblePersonaJuridica");
             const fields = document.getElementById("doblePersonaJuridicaFields");
 
-            const cedulaJuridica2 = document.getElementById("cedula_juridica_2");
-            const nombreJuridico2 = document.getElementById("nombre_juridico_2");
+            const cedulajuridica2 = document.getElementById('cedula_juridica_2');
+            const nombrejuridico2 = document.getElementById('nombre_juridico_2');
 
             if (checkbox.checked) {
                 fields.style.display = "block";
             } else {
                 fields.style.display = "none";
-
-                // Al desmarcar, asigna "." como valor para evitar problemas en el backend
-                cedulaJuridica2.value = ".";
-                nombreJuridico2.value = ".";
+                cedulajuridica2.value = ".";  // Valor por defecto en lugar de vacío
+                nombrejuridico2.value = ".";  // Valor por defecto en lugar de vacío
             }
         }
+
 
 
 
@@ -426,25 +425,27 @@
                     <label for="correo" class="form-label">Correo Electrónico:</label>
                     <input type="email" id="correo" name="correo" class="form-control" required>
 
+                    <!-- Checkbox para activar Doble Persona Jurídica -->
                     <div class="form-check mt-3">
                         <input type="checkbox" class="form-check-input" id="doblePersonaJuridica"
-                            onchange="toggleDoblePersonaJuridica()">
+                            name="doblePersonaJuridica" onchange="toggleDoblePersonaJuridica()">
                         <label class="form-check-label" for="doblePersonaJuridica">Doble Persona Jurídica</label>
                     </div>
 
+                    <!-- Campos de Persona Jurídica 2 (Inicialmente ocultos) -->
                     <div id="doblePersonaJuridicaFields" style="display: none; margin-top: 10px;">
                         <label for="cedula_juridica_2" class="form-label">Cédula Jurídica 2:</label>
                         <div class="input-group">
                             <input type="text" id="cedula_juridica_2" name="cedula_juridica_2" class="form-control"
                                 value=".">
                             <button type="button" class="btn btn-outline-secondary"
-                                onclick="obtenerNombreJuridica_2('cedula_juridica_2')">Buscar</button>
+                                onclick="obtenerNombreJuridica_2()">Buscar</button>
                         </div>
                         <label for="nombre_juridico_2" class="form-label mt-2">Nombre Jurídico 2:</label>
                         <input type="text" id="nombre_juridico_2" name="nombre_juridico_2" class="form-control"
                             value=".">
-
                     </div>
+
 
                 </div>
 

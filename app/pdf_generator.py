@@ -81,8 +81,10 @@ def generate_pdf(request):
         nombre_estimacion = form_data["nombre_estimacion"]
         
         #Segundas Personas Juridicas 
-        CedulaJuridica2 = form_data["cedula_juridico_2"]
-        NombreJuridica2 = form_data["nombre_juridico_2"]
+        # Obtener valores del formulario asegurando que no sean None
+        CedulaJuridica2 = form_data.get("cedula_juridica_2", ".").strip()
+        NombreJuridica2 = form_data.get("nombre_juridico_2", ".").strip()
+
 
         # Datos de ubicación
         provincia = form_data["provincia"]
@@ -139,9 +141,10 @@ def generate_pdf(request):
         c1.setFont("Helvetica-Bold", 9)
         c1.drawString(355, 580, f"{asesor}")
         
-        if form_data.get("nombre_juridico_2", "").strip() != ".":
-            c1.drawString(380,500,f"{CedulaJuridica2}")
-            c1.drawString(75,500,f"{NombreJuridica2}")
+        if CedulaJuridica2 != "." and NombreJuridica2 != ".":
+            c1.drawString(380, 500, CedulaJuridica2)
+            c1.drawString(75, 500, NombreJuridica2)
+
         
 
         # Incluir datos del responsable
