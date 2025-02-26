@@ -8,6 +8,7 @@ from reportlab.pdfgen import canvas
 from app.utils import format_number, split_date
 from PyPDF2 import PdfReader, PdfWriter
 
+from reportlab.lib import colors
 from reportlab.platypus import Paragraph
 from reportlab.lib.styles import getSampleStyleSheet
 
@@ -20,6 +21,7 @@ def draw_wrapped_text(canvas, text, x, y, max_width):
     """
     paragraph = Paragraph(text, style)
     paragraph.wrapOn(canvas, max_width, 100)  # Ajusta el ancho máximo y altura
+    canvas.setFillColor(colors.black)  
     paragraph.drawOn(canvas, x, y)
 
 
