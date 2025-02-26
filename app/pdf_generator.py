@@ -92,8 +92,7 @@ def generate_pdf(request):
         canton = form_data["canton"]
         distrito = form_data["distrito"]
 
-        # Datos de la empresa (si aplica)
-      
+    
        # Datos de la empresa (si aplica)
         cedula_empresa = form_data.get("cedula_empresa", "").strip()
         nombre_empresa = form_data.get("nombre_empresa", "").strip()
@@ -115,7 +114,10 @@ def generate_pdf(request):
         # ✅ 3️⃣ Generar Primer PDF (Valoración)
         pdf1_buffer = io.BytesIO()
         c1 = canvas.Canvas(pdf1_buffer, pagesize=letter)
-
+        
+        if consecutivo == ".": 
+            consecutivo = nombre_cliente 
+            
         c1.setFont("Helvetica-Bold", 50)
         c1.drawString(430, 650, f"{consecutivo}")
         c1.setFont("Helvetica-Bold", 22)

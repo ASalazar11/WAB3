@@ -239,75 +239,7 @@
         }
 
 
-        // Ejecutar validación cuando se cargue la página
-        document.addEventListener("DOMContentLoaded", validarRuta);
 
-
-
-        document.getElementById("selectFolder").addEventListener("click", async function () {
-            try {
-                const response = await fetch("/seleccionar_carpeta");
-                const data = await response.json();
-
-                if (data.path) {
-                    document.getElementById("folderPath").value = data.path;
-                } else {
-                    alert("No se seleccionó ninguna carpeta.");
-                }
-            } catch (error) {
-                console.error("Error al seleccionar carpeta:", error);
-            }
-        });
-
-
-
-        document.getElementById("selectFolder").addEventListener("click", async function () {
-            try {
-                const response = await fetch("/set_save_path", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ path: "/opt/render/project/files/WABEDOCS" })
-                });
-                const data = await response.json();
-                document.getElementById("folderPath").value = data.message;
-            } catch (error) {
-                console.error("Error al seleccionar carpeta:", error);
-            }
-        });
-
-
-        document.getElementById("generate-btn").addEventListener("click", function () {
-            fetch("/generate_pdf", { method: "POST" })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.error) {
-                        alert("Error: " + data.error);
-                        return;
-                    }
-
-                    // Descargar el primer PDF (Valoración)
-                    let link1 = document.createElement("a");
-                    link1.href = data.valoracion_pdf;
-                    link1.download = "valoracion.pdf";
-                    document.body.appendChild(link1);
-                    link1.click();
-                    document.body.removeChild(link1);
-
-                    // Esperar 2 segundos y descargar el segundo PDF (Estimación)
-                    setTimeout(() => {
-                        let link2 = document.createElement("a");
-                        link2.href = data.estimacion_pdf;
-                        link2.download = "estimacion.pdf";
-                        document.body.appendChild(link2);
-                        link2.click();
-                        document.body.removeChild(link2);
-                    }, 2000);
-                })
-                .catch(error => {
-                    console.error("Error en la solicitud:", error);
-                    alert("Hubo un error al generar los PDFs.");
-                });
-        });
 
         function toggleDoblePersonaJuridica() {
             const checkbox = document.getElementById("doblePersonaJuridica");
@@ -345,7 +277,6 @@
             }
         }
 
-
         document.addEventListener("DOMContentLoaded", function () {
             let bloquearConsecutivo = document.getElementById("bloquearConsecutivo");
             let consecutivoInput = document.getElementById("consecutivo");
@@ -356,17 +287,20 @@
                 consecutivoInput.disabled = true;
             }
 
-            // Agregar el evento para cuando el usuario marque/desmarque
+            // Evento para cuando el usuario marque/desmarque
             bloquearConsecutivo.addEventListener("change", function () {
                 if (this.checked) {
                     consecutivoInput.value = ".";
-                    consecutivoInput.disabled = true; // Bloquea la edición
+                    consecutivoInput.disabled = true;
                 } else {
                     consecutivoInput.value = "";
-                    consecutivoInput.disabled = false; // Habilita edición
+                    consecutivoInput.disabled = false;
                 }
             });
         });
+
+
+
 
 
 
