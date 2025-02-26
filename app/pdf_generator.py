@@ -117,7 +117,7 @@ def generate_pdf(request):
         
         if consecutivo == ".": 
             consecutivo = nombre_cliente
-            fecha_ingreso == ""
+            #fecha_ingreso == ""
             
         c1.setFont("Helvetica-Bold", 50)
         c1.drawString(430, 650, f"{consecutivo}")
