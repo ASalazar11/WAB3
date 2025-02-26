@@ -101,8 +101,10 @@ def generate_pdf(request):
         cedula_empresa = format_number(form_data.get("cedula_empresa", ""), is_cedula=True)
         
         nombre_empresa = form_data.get("nombre_empresa")
-
-        # Obtener la fecha actual para el nombre del archivo
+        
+        if consecutivo == ".": 
+            consecutivo = ""
+       
         consecutivo_prefijo = f"25-{form_data['consecutivo']}"
         sanitized_name = "".join([c if c.isalnum() or c in " ._-()" else "_" for c in nombre_cliente])
 
@@ -115,8 +117,6 @@ def generate_pdf(request):
         pdf1_buffer = io.BytesIO()
         c1 = canvas.Canvas(pdf1_buffer, pagesize=letter)
         
-        if consecutivo == ".": 
-            consecutivo = nombre_cliente
             #fecha_ingreso == ""
             
         c1.setFont("Helvetica-Bold", 50)
