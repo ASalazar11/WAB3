@@ -245,16 +245,18 @@ def generate_pdf(request):
         # Fusionar con la plantilla
         pdf2_final = merge_pdfs(ESTIMACION_PDF_PATH, pdf2_buffer)
         
-        # Crear un nuevo buffer para el documento PEJV
         pdf_pejv_buffer = io.BytesIO()
         c3 = canvas.Canvas(pdf_pejv_buffer, pagesize=letter)
+
+        # Título del documento
+        c3.setFont("Helvetica-Bold", 14)
+        c3.drawString(200, 750, "PODER ESPECIAL")
 
         # Definir el texto largo a incluir
         texto_pejv = """Quien suscribe JORGE ACON SANCHEZ, portador de la cédula 7-0054-0131, como APODERADO GENERALÍSIMO SIN LÍMITE DE SUMA DE LIMOFRUT S.A., cédula jurídica 3-101-297878 en calidad de Asegurado del vehículo placa CL-292788 el PODERDANTE, otorgó PODER ESPECIAL de conformidad con el artículo mil doscientos cincuenta y seis del Código Civil de la República de Costa Rica a favor de la señora Krisby Wabe Arce, mayor, soltera, vecina de Curridabat, con número de cédula 1-112190411 y/o Mirkala Wabe Arce, mayor, soltera, vecina de Curridabat, con número de cédula 1-10990472, y/o David Matamoros Rojas, mayor, casado, vecino de Cartago, con número de cédula 1-10650005, pudiendo actuar conjunta o separadamente, funcionarios del taller Wabe, Carrocería y Pintura, Sociedad Anónima, cédula de persona jurídica 3-101-085331, en lo sucesivo los APODERADOS, les faculto para que en mi representación realicen gestiones ante cualesquiera de las instalaciones o departamentos del Instituto Nacional de Seguros."""
 
         # Llamar a la función para dibujar el texto con saltos de línea automáticos
-        c3.setFont("Helvetica-Bold", 10)
-        draw_wrapped_text(c3, texto_pejv, 80, 800, 400)  # x=100, y=700, ancho máximo=550px
+        draw_wrapped_text(c3, texto_pejv, 100, 700, 400)  # x=100, y=700, ancho máximo=400px
 
         # Guardar y posicionar el documento
         c3.save()
