@@ -8,6 +8,20 @@ from reportlab.pdfgen import canvas
 from app.utils import format_number, split_date
 from PyPDF2 import PdfReader, PdfWriter
 
+from reportlab.platypus import Paragraph
+from reportlab.lib.styles import getSampleStyleSheet
+
+styles = getSampleStyleSheet()
+style = styles["Normal"]
+
+def draw_wrapped_text(canvas, text, x, y, max_width):
+    """
+    Dibuja texto con saltos de línea automáticos dentro del PDF.
+    """
+    paragraph = Paragraph(text, style)
+    paragraph.wrapOn(canvas, max_width, 100)  # Ajusta el ancho máximo y altura
+    paragraph.drawOn(canvas, x, y)
+
 
 def merge_pdfs(template_pdf_path, generated_pdf):
     output_buffer = io.BytesIO()
@@ -112,6 +126,8 @@ def generate_pdf(request):
         # ✅ 2️⃣ Cargar las plantillas
         VALORACION_PDF_PATH = "pdfs/VALORACION.pdf"
         ESTIMACION_PDF_PATH = "pdfs/ESTIMACION.pdf"
+        PEJV_PDF_PATH = "pdfs/PEJV.pdf"
+        
 
         # ✅ 3️⃣ Generar Primer PDF (Valoración)
         pdf1_buffer = io.BytesIO()
@@ -223,12 +239,34 @@ def generate_pdf(request):
 
         # Fusionar con la plantilla
         pdf2_final = merge_pdfs(ESTIMACION_PDF_PATH, pdf2_buffer)
+        
+        # Crear un nuevo buffer para el documento PEJV
+        pdf_pejv_buffer = io.BytesIO()
+        c3 = canvas.Canvas(pdf_pejv_buffer, pagesize=letter)
+
+        # Título del documento
+        c3.setFont("Helvetica-Bold", 14)
+        c3.drawString(200, 750, "PODER ESPECIAL")
+
+        # Definir el texto largo a incluir
+        texto_pejv = """Quien suscribe JORGE ACON SANCHEZ, portador de la cédula 7-0054-0131, como APODERADO GENERALÍSIMO SIN LÍMITE DE SUMA DE LIMOFRUT S.A., cédula jurídica 3-101-297878 en calidad de Asegurado del vehículo placa CL-292788 el PODERDANTE, otorgó PODER ESPECIAL de conformidad con el artículo mil doscientos cincuenta y seis del Código Civil de la República de Costa Rica a favor de la señora Krisby Wabe Arce, mayor, soltera, vecina de Curridabat, con número de cédula 1-112190411 y/o Mirkala Wabe Arce, mayor, soltera, vecina de Curridabat, con número de cédula 1-10990472, y/o David Matamoros Rojas, mayor, casado, vecino de Cartago, con número de cédula 1-10650005, pudiendo actuar conjunta o separadamente, funcionarios del taller Wabe, Carrocería y Pintura, Sociedad Anónima, cédula de persona jurídica 3-101-085331, en lo sucesivo los APODERADOS, les faculto para que en mi representación realicen gestiones ante cualesquiera de las instalaciones o departamentos del Instituto Nacional de Seguros."""
+
+        # Llamar a la función para dibujar el texto con saltos de línea automáticos
+        draw_wrapped_text(c3, texto_pejv, 100, 700, 400)  # x=100, y=700, ancho máximo=400px
+
+        # Guardar y posicionar el documento
+        c3.save()
+        pdf_pejv_buffer.seek(0)
+        
+        pdf3_final = merge_pdfs(PEJV_PDF_PATH, pdf_pejv_buffer)
+
 
         # ✅ 5️⃣ Enviar los archivos en un ZIP
         zip_buffer = io.BytesIO()
         with zipfile.ZipFile(zip_buffer, "w") as zip_file:
             zip_file.writestr(f"{consecutivo_prefijo}_VALORACION_{sanitized_name}.pdf", pdf1_final.getvalue())
             zip_file.writestr(f"{consecutivo_prefijo}_ESTIMACION_{sanitized_name}.pdf", pdf2_final.getvalue())
+            zip_file.writestr(f"{consecutivo_prefijo}_PoderEspecialJuridico_{sanitized_name}.pdf", pdf3_final.getvalue())
 
 
         zip_buffer.seek(0)
