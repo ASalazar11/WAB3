@@ -346,6 +346,30 @@
         }
 
 
+        document.addEventListener("DOMContentLoaded", function () {
+            let bloquearConsecutivo = document.getElementById("bloquearConsecutivo");
+            let consecutivoInput = document.getElementById("consecutivo");
+
+            // Verifica el estado inicial
+            if (bloquearConsecutivo.checked) {
+                consecutivoInput.value = ".";
+                consecutivoInput.disabled = true;
+            }
+
+            // Agregar el evento para cuando el usuario marque/desmarque
+            bloquearConsecutivo.addEventListener("change", function () {
+                if (this.checked) {
+                    consecutivoInput.value = ".";
+                    consecutivoInput.disabled = true; // Bloquea la edición
+                } else {
+                    consecutivoInput.value = "";
+                    consecutivoInput.disabled = false; // Habilita edición
+                }
+            });
+        });
+
+
+
 
     </script>
 
@@ -377,10 +401,20 @@
                     <label for="aviso" class="form-label">Número de Caso/Aviso:</label>
                     <input type="text" id="aviso" name="aviso" class="form-control" required>
                 </div>
+
                 <div class="col-md-4">
                     <label for="consecutivo" class="form-label">Número de Consecutivo (0000):</label>
                     <input type="text" id="consecutivo" name="consecutivo" class="form-control" required>
+
+                    <!-- Checkbox para bloquear el campo -->
+                    <div class="form-check mt-2">
+                        <input type="checkbox" class="form-check-input" id="bloquearConsecutivo">
+                        <label class="form-check-label" for="bloquearConsecutivo">Generar Documemto sin
+                            consecutivo</label>
+                    </div>
                 </div>
+
+
                 <div class="col-md-4">
                     <label for="opcion" class="form-label">Selecciona una opción de cobertura:</label>
                     <select id="opcion" name="opcion" class="form-select" required>
@@ -436,12 +470,15 @@
                     <div id="doblePersonaJuridicaFields" style="display: none; margin-top: 10px;">
                         <label for="cedula_juridica_2" class="form-label">Cédula Jurídica 2:</label>
                         <div class="input-group">
-                            <input type="text" id="cedula_juridica_2" name="cedula_juridica_2" class="form-control" value=".">
-                            <button type="button" class="btn btn-outline-secondary" onclick="obtenerNombreJuridica_2()">Buscar</button>
+                            <input type="text" id="cedula_juridica_2" name="cedula_juridica_2" class="form-control"
+                                value=".">
+                            <button type="button" class="btn btn-outline-secondary"
+                                onclick="obtenerNombreJuridica_2()">Buscar</button>
                         </div>
                         <label for="nombre_juridico_2" class="form-label mt-2">Nombre Jurídico 2:</label>
                         <!-- Corregir el name a 'nombre_juridica_2' -->
-                        <input type="text" id="nombre_juridico_2" name="nombre_juridico_2" class="form-control" value=".">
+                        <input type="text" id="nombre_juridico_2" name="nombre_juridico_2" class="form-control"
+                            value=".">
                     </div>
 
 
