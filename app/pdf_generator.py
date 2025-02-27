@@ -12,14 +12,29 @@ from reportlab.lib import colors
 from reportlab.platypus import Paragraph
 from reportlab.lib.styles import getSampleStyleSheet
 
+
+
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.platypus import Paragraph
+from reportlab.lib.enums import TA_JUSTIFY
+from reportlab.lib import colors
+
+# Definir un nuevo estilo justificado
 styles = getSampleStyleSheet()
-style = styles["Normal"]
+justified_style = ParagraphStyle(
+    'Justify',
+    parent=styles['Normal'],
+    alignment=TA_JUSTIFY,  # JUSTIFICAR TEXTO
+    fontSize=10,
+    leading=14,  # Espaciado entre líneas
+    textColor=colors.black
+)
 
 def draw_wrapped_text(canvas, text, x, y, max_width):
     """
     Dibuja texto con saltos de línea automáticos dentro del PDF.
     """
-    paragraph = Paragraph(text, style)
+    paragraph = Paragraph(text, justified_style)
     paragraph.wrapOn(canvas, max_width, 100)  # Ajusta el ancho máximo y altura
     canvas.setFillColor(colors.black)  
     paragraph.drawOn(canvas, x, y)
