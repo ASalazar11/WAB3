@@ -266,7 +266,7 @@ def generate_pdf(request):
 
         # Definir el texto largo a incluir
         # Insertar variables en el texto usando f-strings
-        texto_pejv = f"""Quien suscribe,{nombre_estimacion}, portador de la cédula {cedula_estimacion}, como APODERADO GENERALÍSIMO SIN LÍMITE DE SUMA DE {nombre_empresa}, 
+        texto_pejv = f"""Quien suscribe, {nombre_estimacion}, portador de la cédula {cedula_estimacion}, como APODERADO GENERALÍSIMO SIN LÍMITE DE SUMA DE {nombre_empresa}, 
         cédula jurídica {cedula_empresa} en calidad de Asegurado del vehículo placa {placa} el PODERDANTE, otorgó PODER ESPECIAL de conformidad 
         con el artículo mil doscientos cincuenta y seis del Código Civil de la República de Costa Rica a favor de la señora Krisby Wabe Arce, mayor, 
         soltera, vecina de Curridabat, con número de cédula 1-112190411 y/o Mirkala Wabe Arce, mayor, soltera, vecina de Curridabat, con número de 
