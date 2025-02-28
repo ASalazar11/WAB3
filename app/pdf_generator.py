@@ -265,7 +265,17 @@ def generate_pdf(request):
         c3 = canvas.Canvas(pdf_pejv_buffer, pagesize=legal)
 
         # Definir el texto largo a incluir
-        texto_pejv = """Quien suscribe, portador de la cédula 7-0054-0131, como APODERADO GENERALÍSIMO SIN LÍMITE DE SUMA DE LIMOFRUT S.A., cédula jurídica 3-101-297878 en calidad de Asegurado del vehículo placa CL-292788 el PODERDANTE, otorgó PODER ESPECIAL de conformidad con el artículo mil doscientos cincuenta y seis del Código Civil de la República de Costa Rica a favor de la señora Krisby Wabe Arce, mayor, soltera, vecina de Curridabat, con número de cédula 1-112190411 y/o Mirkala Wabe Arce, mayor, soltera, vecina de Curridabat, con número de cédula 1-10990472, y/o David Matamoros Rojas, mayor, casado, vecino de Cartago, con número de cédula 1-10650005, pudiendo actuar conjunta o separadamente, funcionarios del taller Wabe, Carrocería y Pintura, Sociedad Anónima, cédula de persona jurídica 3-101-085331, en lo sucesivo los APODERADOS, les faculto para que en mi representación realicen gestiones ante cualesquiera de las instalaciones o departamentos del Instituto Nacional de Seguros."""
+        # Insertar variables en el texto usando f-strings
+        texto_pejv = f"""Quien suscribe,{nombre_estimacion}, portador de la cédula {cedula_estimacion}, como APODERADO GENERALÍSIMO SIN LÍMITE DE SUMA DE {nombre_empresa}, 
+        cédula jurídica {cedula_empresa} en calidad de Asegurado del vehículo placa {placa} el PODERDANTE, otorgó PODER ESPECIAL de conformidad 
+        con el artículo mil doscientos cincuenta y seis del Código Civil de la República de Costa Rica a favor de la señora Krisby Wabe Arce, mayor, 
+        soltera, vecina de Curridabat, con número de cédula 1-112190411 y/o Mirkala Wabe Arce, mayor, soltera, vecina de Curridabat, con número de 
+        cédula 1-10990472, y/o David Matamoros Rojas, mayor, casado, vecino de Cartago, con número de cédula 1-10650005, pudiendo actuar conjunta o 
+        separadamente, funcionarios del taller Wabe, Carrocería y Pintura, Sociedad Anónima, cédula de persona jurídica 3-101-085331, en lo sucesivo 
+        los APODERADOS, les faculto para que en mi representación realicen gestiones ante cualesquiera de las instalaciones o departamentos del 
+        Instituto Nacional de Seguros."""
+
+
 
         # Llamar a la función para dibujar el texto con saltos de línea automáticos
         draw_wrapped_text(c3, texto_pejv, 60, 790, 500)  # x=100, y=700, ancho máximo=400px
