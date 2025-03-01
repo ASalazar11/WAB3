@@ -305,7 +305,7 @@ def generate_pdf(request):
 
 
         # Llamar a la función para dibujar el texto con saltos de línea automáticos
-        draw_wrapped_text(c3, texto_pejv, 36, 785, 540)  # x=100, y=700, ancho máximo=400px
+        draw_wrapped_text(c3, texto_pejv, 36, 770, 540)  # x=100, y=700, ancho máximo=400px
         
         draw_wrapped_text(c3, texto_pejv2, 36, 230, 540)
         
