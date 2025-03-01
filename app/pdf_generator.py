@@ -305,9 +305,13 @@ def generate_pdf(request):
 
 
         # Llamar a la función para dibujar el texto con saltos de línea automáticos
-        draw_wrapped_text(c3, texto_pejv, 60, 790, 500)  # x=100, y=700, ancho máximo=400px
+        draw_wrapped_text(c3, texto_pejv, 60, 785, 500)  # x=100, y=700, ancho máximo=400px
         
-        draw_wrapped_text(c3, texto_pejv2, 60, 200, 500)
+        draw_wrapped_text(c3, texto_pejv2, 60, 190, 500)
+        
+        c3.setFont("Helvetica", 10)
+        c3.drawString(40, 120, f"{nombre_estimacion}")
+        c3.drawString(40, 110, f"{cedula_estimacion}")
 
         # Guardar y posicionar el documento
         c3.save()
