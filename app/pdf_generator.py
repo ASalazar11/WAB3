@@ -310,8 +310,8 @@ def generate_pdf(request):
         draw_wrapped_text(c3, texto_pejv2, 40, 230, 532)
         
         c3.setFont("Helvetica-Bold", 14)
-        c3.drawString(40, 140, f"{nombre_estimacion}")
-        c3.drawString(80, 130, f"{cedula_estimacion}")
+        c3.drawString(36, 142, f"{nombre_estimacion}")
+        c3.drawString(95, 130, f"{cedula_estimacion}")
 
         # Guardar y posicionar el documento
         c3.save()
