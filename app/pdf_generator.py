@@ -284,7 +284,7 @@ def generate_pdf(request):
         accidente: CAS-{aviso}, vehículo {placa} De conformidad con todo lo anterior, firmo en San José, del día {fecha_ingreso_formateada}. 
         ES TODO ***** """    
         # Llamar a la función para dibujar el texto con saltos de línea automáticos
-        draw_wrapped_text(c3, texto_pejv, 36, 820, 540)  # x=100, y=700, ancho máximo=400px
+        draw_wrapped_text(c3, texto_pejv, 36, 805, 540)  # x=100, y=700, ancho máximo=400px
         
         draw_wrapped_text(c3, texto_pejv2, 36, 230, 540)
         
@@ -320,7 +320,7 @@ def generate_pdf(request):
         accidente: CAS-{aviso}, vehículo {placa} De conformidad con todo lo anterior, firmo en San José, del día {fecha_ingreso_formateada}. 
         ES TODO ***** """    
         # Llamar a la función para dibujar el texto con saltos de línea automáticos
-        draw_wrapped_text(c4, texto_pefv, 36, 820, 540)  # x=100, y=700, ancho máximo=400px
+        draw_wrapped_text(c4, texto_pefv, 36, 810, 540)  # x=100, y=700, ancho máximo=400px
         
         draw_wrapped_text(c4, texto_pefv2, 36, 230, 540)
         
