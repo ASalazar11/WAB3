@@ -20,14 +20,13 @@ from reportlab.platypus import Paragraph
 from reportlab.lib.enums import TA_JUSTIFY
 from reportlab.lib import colors
 
-# Definir un nuevo estilo justificado
 styles = getSampleStyleSheet()
 justified_style = ParagraphStyle(
     'Justify',
     parent=styles['Normal'],
-    alignment=TA_JUSTIFY,  # JUSTIFICAR TEXTO
+    alignment=TA_JUSTIFY,  
     fontSize=11,
-    leading=14,  # Espaciado entre líneas
+    leading=14, 
     textColor=colors.black
 )
 
@@ -36,7 +35,7 @@ def draw_wrapped_text(canvas, text, x, y, max_width):
     Dibuja texto con saltos de línea automáticos dentro del PDF.
     """
     paragraph = Paragraph(text, justified_style)
-    paragraph.wrapOn(canvas, max_width, 100)  # Ajusta el ancho máximo y altura
+    paragraph.wrapOn(canvas, max_width, 100)  
     canvas.setFillColor(colors.black)  
     paragraph.drawOn(canvas, x, y)
 
@@ -49,7 +48,7 @@ def formatear_fecha(fecha):
         7: "julio", 8: "agosto", 9: "septiembre", 10: "octubre", 11: "noviembre", 12: "diciembre"
     }
     
-    fecha_dt = datetime.strptime(fecha, "%Y-%m-%d")  # Ajustar al formato correcto
+    fecha_dt = datetime.strptime(fecha, "%Y-%m-%d")  
     dia = fecha_dt.day
     mes = meses[fecha_dt.month]
     anio = fecha_dt.year
@@ -60,26 +59,17 @@ def merge_pdfs(template_pdf_path, generated_pdf):
     output_buffer = io.BytesIO()
     writer = PdfWriter()
 
-    # Leer la plantilla PDF desde el archivo
     template_reader = PdfReader(template_pdf_path)
 
-    # Cargar la página de la plantilla sin modificarla
     template_page = template_reader.pages[0]  
 
-    # Cargar el PDF generado en memoria
     generated_pdf.seek(0)
     generated_reader = PdfReader(generated_pdf)
 
-    # Agregar la página fusionada al nuevo PDF
-    
-
-    # Fusionar la plantilla con el PDF generado
     template_page.merge_page(generated_reader.pages[0])
 
-    # Agregar la página fusionada al nuevo PDF
     writer.add_page(template_page)
 
-    # Guardar el PDF final en memoria
     writer.write(output_buffer)
     output_buffer.seek(0)
     return output_buffer
@@ -87,7 +77,6 @@ def merge_pdfs(template_pdf_path, generated_pdf):
 
 def generate_pdf(request):
     try:
-        # ✅ 1️⃣ Verificar que todos los datos requeridos están presentes
         required_fields = [
             "aviso", "consecutivo", "opcion", "cedula", "nombre", "telefono",
             "correo", "fecha_evento", "fecha_ingreso", "placa", "marca", "modelo",
@@ -122,7 +111,6 @@ def generate_pdf(request):
         dia_evento, mes_evento, anio_evento = split_date(fecha_evento)
         dia_ingreso, mes_ingreso, anio_ingreso = split_date(fecha_ingreso)
 
-        # Datos del responsable
         cedula_responsable = format_number(form_data["cedula_responsable"], is_cedula=True)
         nombre_responsable = form_data["nombre_responsable"]
         correo_responsable = form_data["correo_responsable"]
@@ -135,14 +123,11 @@ def generate_pdf(request):
         CedulaJuridica2 = format_number(form_data.get("cedula_juridica_2", ".").strip(), is_cedula=True)
         NombreJuridica2 = form_data.get("nombre_juridico_2", ".").strip()
 
-
-
         # Datos de ubicación
         provincia = form_data["provincia"]
         canton = form_data["canton"]
         distrito = form_data["distrito"]
 
-    
        # Datos de la empresa (si aplica)
         cedula_empresa = form_data.get("cedula_empresa", "").strip()
         nombre_empresa = form_data.get("nombre_empresa", "").strip()
@@ -163,6 +148,7 @@ def generate_pdf(request):
         VALORACION_PDF_PATH = "pdfs/VALORACION.pdf"
         ESTIMACION_PDF_PATH = "pdfs/ESTIMACION.pdf"
         PEJV_PDF_PATH = "pdfs/PEJV.pdf"
+        PEFV_PDF_PATH = "pdfs/PEFV.pdf"
         
 
         # ✅ 3️⃣ Generar Primer PDF (Valoración)
@@ -280,8 +266,6 @@ def generate_pdf(request):
         pdf_pejv_buffer = io.BytesIO()
         c3 = canvas.Canvas(pdf_pejv_buffer, pagesize=legal)
 
-        # Definir el texto largo a incluir
-        # Insertar variables en el texto usando f-strings
         texto_pejv = f"""Quien suscribe, {nombre_estimacion}, portador de la cédula {cedula_estimacion}, como APODERADO GENERALÍSIMO SIN LÍMITE DE SUMA DE {nombre_empresa}, 
         cédula jurídica {cedula_empresa} en calidad de Asegurado del vehículo placa {placa} el PODERDANTE, otorgó PODER ESPECIAL de conformidad 
         con el artículo mil doscientos cincuenta y seis del Código Civil de la República de Costa Rica a favor de la señora Krisby Wabe Arce, mayor, 
@@ -290,9 +274,7 @@ def generate_pdf(request):
         separadamente, funcionarios del taller Wabe, Carrocería y Pintura, Sociedad Anónima, cédula de persona jurídica 3-101-085331, en lo sucesivo 
         los APODERADOS, les faculto para que en mi representación realicen gestiones ante cualesquiera de las instalaciones o departamentos del 
         Instituto Nacional de Seguros."""
-        
         fecha_ingreso_formateada = formatear_fecha(fecha_ingreso)
-
         texto_pejv2 = f"""Así mismo se encuentra facultado cualquiera de estos apoderados o todos en conjunto a interponer 
         cualquier recurso procedente, incluyendo recursos de revocatoria, apelación y solicitar el agotamiento de la vía administrativa, 
         en caso que el INS no indemnice el caso. Este poder especial sólo podrá ser revocado por el poderdante o mandatario a partir del momento 
@@ -300,10 +282,7 @@ def generate_pdf(request):
         generado la reparación del (os) vehículo (s) aquí descrito (s) y referido (s), menos las deducciones registradas en la liquidación final 
         del reclamo. El poderdante renuncia a cualquier reclamo posterior. Lo antes aquí autorizado está relacionado al número de aviso de 
         accidente: CAS-{aviso}, vehículo {placa} De conformidad con todo lo anterior, firmo en San José, del día {fecha_ingreso_formateada}. 
-        ES TODO ***** """
-        
-
-
+        ES TODO ***** """    
         # Llamar a la función para dibujar el texto con saltos de línea automáticos
         draw_wrapped_text(c3, texto_pejv, 36, 770, 540)  # x=100, y=700, ancho máximo=400px
         
@@ -318,6 +297,42 @@ def generate_pdf(request):
         pdf_pejv_buffer.seek(0)
         
         pdf3_final = merge_pdfs(PEJV_PDF_PATH, pdf_pejv_buffer)
+        
+        pdf_pefv_buffer = io.BytesIO()
+        c4 = canvas.Canvas(pdf_pefv_buffer, pagesize=legal)
+
+        texto_pefv = f"""Quien suscribe, {nombre_estimacion}, portador de la cédula {cedula_estimacion}, en calidad de PROPIETARIO del vehículo placa {placa}, otorgó PODER ESPECIAL de conformidad 
+        con el artículo mil doscientos cincuenta y seis del Código Civil de la República de Costa Rica a favor de la señora Krisby Wabe Arce, mayor, 
+        soltera, vecina de Curridabat, con número de cédula 1-112190411 y/o Mirkala Wabe Arce, mayor, soltera, vecina de Curridabat, con número de 
+        cédula 1-10990472, y/o David Matamoros Rojas, mayor, casado, vecino de Cartago, con número de cédula 1-10650005, pudiendo actuar conjunta o 
+        separadamente, funcionarios del taller Wabe, Carrocería y Pintura, Sociedad Anónima, cédula de persona jurídica 3-101-085331, en lo sucesivo 
+        los APODERADOS, les faculto para que en mi representación realicen gestiones ante cualesquiera de las instalaciones o departamentos del 
+        Instituto Nacional de Seguros."""
+        
+        fecha_ingreso_formateada = formatear_fecha(fecha_ingreso)
+        
+        texto_pefv2 = f"""Así mismo se encuentra facultado cualquiera de estos apoderados o todos en conjunto a interponer 
+        cualquier recurso procedente, incluyendo recursos de revocatoria, apelación y solicitar el agotamiento de la vía administrativa, 
+        en caso que el INS no indemnice el caso. Este poder especial sólo podrá ser revocado por el poderdante o mandatario a partir del momento 
+        en que el apoderado haya recibido del Instituto Nacional de Seguros la indemnización total, que corresponde al total de la cuenta que ha 
+        generado la reparación del (os) vehículo (s) aquí descrito (s) y referido (s), menos las deducciones registradas en la liquidación final 
+        del reclamo. El poderdante renuncia a cualquier reclamo posterior. Lo antes aquí autorizado está relacionado al número de aviso de 
+        accidente: CAS-{aviso}, vehículo {placa} De conformidad con todo lo anterior, firmo en San José, del día {fecha_ingreso_formateada}. 
+        ES TODO ***** """    
+        # Llamar a la función para dibujar el texto con saltos de línea automáticos
+        draw_wrapped_text(c4, texto_pefv, 36, 770, 540)  # x=100, y=700, ancho máximo=400px
+        
+        draw_wrapped_text(c4, texto_pefv2, 36, 230, 540)
+        
+        c4.setFont("Helvetica-Bold", 14)
+        c4.drawString(36, 145, f"{cedula_cliente}")
+        c4.drawString(95, 128, f"{cedula_cliente}")
+
+        # Guardar y posicionar el documento
+        c4.save()
+        pdf_pefv_buffer.seek(0)
+        
+        pdf4_final = merge_pdfs(PEFV_PDF_PATH, pdf_pefv_buffer)
 
 
         # ✅ 5️⃣ Enviar los archivos en un ZIP
@@ -326,7 +341,7 @@ def generate_pdf(request):
             zip_file.writestr(f"{consecutivo_prefijo}_VALORACION_{sanitized_name}.pdf", pdf1_final.getvalue())
             zip_file.writestr(f"{consecutivo_prefijo}_ESTIMACION_{sanitized_name}.pdf", pdf2_final.getvalue())
             zip_file.writestr(f"{consecutivo_prefijo}_PoderEspecialJuridico_{sanitized_name}.pdf", pdf3_final.getvalue())
-
+            zip_file.writestr(f"{consecutivo_prefijo}_PoderEspecialFisico_{sanitized_name}.pdf", pdf4_final.getvalue())
 
         zip_buffer.seek(0)
 
