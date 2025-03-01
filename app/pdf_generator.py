@@ -13,6 +13,7 @@ from reportlab.platypus import Paragraph
 from reportlab.lib.styles import getSampleStyleSheet
 
 from reportlab.lib.pagesizes import legal
+from datetime import datetime
 
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.platypus import Paragraph
@@ -39,6 +40,21 @@ def draw_wrapped_text(canvas, text, x, y, max_width):
     canvas.setFillColor(colors.black)  
     paragraph.drawOn(canvas, x, y)
 
+def formatear_fecha(fecha):
+    """
+    Convierte una fecha en formato '2/2/2025' a '2 de febrero del 2025'
+    """
+    meses = {
+        1: "enero", 2: "febrero", 3: "marzo", 4: "abril", 5: "mayo", 6: "junio",
+        7: "julio", 8: "agosto", 9: "septiembre", 10: "octubre", 11: "noviembre", 12: "diciembre"
+    }
+    
+    fecha_dt = datetime.strptime(fecha, "%d/%m/%Y")  # Convertir a objeto datetime
+    dia = fecha_dt.day
+    mes = meses[fecha_dt.month]
+    anio = fecha_dt.year
+    
+    return f"{dia} de {mes} del {anio}"
 
 def merge_pdfs(template_pdf_path, generated_pdf):
     output_buffer = io.BytesIO()
@@ -274,11 +290,24 @@ def generate_pdf(request):
         separadamente, funcionarios del taller Wabe, Carrocería y Pintura, Sociedad Anónima, cédula de persona jurídica 3-101-085331, en lo sucesivo 
         los APODERADOS, les faculto para que en mi representación realicen gestiones ante cualesquiera de las instalaciones o departamentos del 
         Instituto Nacional de Seguros."""
+        
+        fecha_ingreso_formateada = formatear_fecha(fecha_ingreso)
 
+        texto_pejv2 = f"""Así mismo se encuentra facultado cualquiera de estos apoderados o todos en conjunto a interponer 
+        cualquier recurso procedente, incluyendo recursos de revocatoria, apelación y solicitar el agotamiento de la vía administrativa, 
+        en caso que el INS no indemnice el caso. Este poder especial sólo podrá ser revocado por el poderdante o mandatario a partir del momento 
+        en que el apoderado haya recibido del Instituto Nacional de Seguros la indemnización total, que corresponde al total de la cuenta que ha 
+        generado la reparación del (os) vehículo (s) aquí descrito (s) y referido (s), menos las deducciones registradas en la liquidación final 
+        del reclamo. El poderdante renuncia a cualquier reclamo posterior. Lo antes aquí autorizado está relacionado al número de aviso de 
+        accidente: CAS-{aviso}, vehículo {placa} De conformidad con todo lo anterior., firmo en San José, del día {fecha_ingreso_formateada}. 
+        ES TODO ***** """
+        
 
 
         # Llamar a la función para dibujar el texto con saltos de línea automáticos
         draw_wrapped_text(c3, texto_pejv, 60, 790, 500)  # x=100, y=700, ancho máximo=400px
+        
+        draw_wrapped_text(c3, texto_pejv2, 60, 200, 500)
 
         # Guardar y posicionar el documento
         c3.save()
