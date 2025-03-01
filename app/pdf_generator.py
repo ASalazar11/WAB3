@@ -42,14 +42,14 @@ def draw_wrapped_text(canvas, text, x, y, max_width):
 
 def formatear_fecha(fecha):
     """
-    Convierte una fecha en formato '2/2/2025' a '2 de febrero del 2025'
+    Convierte una fecha en formato 'YYYY-MM-DD' a '2 de febrero del 2025'
     """
     meses = {
         1: "enero", 2: "febrero", 3: "marzo", 4: "abril", 5: "mayo", 6: "junio",
         7: "julio", 8: "agosto", 9: "septiembre", 10: "octubre", 11: "noviembre", 12: "diciembre"
     }
     
-    fecha_dt = datetime.strptime(fecha, "%d/%m/%Y")  # Convertir a objeto datetime
+    fecha_dt = datetime.strptime(fecha, "%Y-%m-%d")  # Ajustar al formato correcto
     dia = fecha_dt.day
     mes = meses[fecha_dt.month]
     anio = fecha_dt.year
