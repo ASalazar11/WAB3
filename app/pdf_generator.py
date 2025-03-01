@@ -26,7 +26,7 @@ justified_style = ParagraphStyle(
     'Justify',
     parent=styles['Normal'],
     alignment=TA_JUSTIFY,  # JUSTIFICAR TEXTO
-    fontSize=10,
+    fontSize=12,
     leading=14,  # Espaciado entre líneas
     textColor=colors.black
 )
@@ -305,13 +305,13 @@ def generate_pdf(request):
 
 
         # Llamar a la función para dibujar el texto con saltos de línea automáticos
-        draw_wrapped_text(c3, texto_pejv, 40, 785, 532)  # x=100, y=700, ancho máximo=400px
+        draw_wrapped_text(c3, texto_pejv, 36, 785, 540)  # x=100, y=700, ancho máximo=400px
         
-        draw_wrapped_text(c3, texto_pejv2, 40, 230, 532)
+        draw_wrapped_text(c3, texto_pejv2, 36, 230, 540)
         
         c3.setFont("Helvetica-Bold", 14)
-        c3.drawString(36, 142, f"{nombre_estimacion}")
-        c3.drawString(95, 130, f"{cedula_estimacion}")
+        c3.drawString(36, 145, f"{nombre_estimacion}")
+        c3.drawString(95, 128, f"{cedula_estimacion}")
 
         # Guardar y posicionar el documento
         c3.save()
