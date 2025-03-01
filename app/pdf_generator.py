@@ -284,7 +284,7 @@ def generate_pdf(request):
         accidente: CAS-{aviso}, vehículo {placa} De conformidad con todo lo anterior, firmo en San José, del día {fecha_ingreso_formateada}. 
         ES TODO ***** """    
         # Llamar a la función para dibujar el texto con saltos de línea automáticos
-        draw_wrapped_text(c3, texto_pejv, 36, 770, 540)  # x=100, y=700, ancho máximo=400px
+        draw_wrapped_text(c3, texto_pejv, 36, 820, 540)  # x=100, y=700, ancho máximo=400px
         
         draw_wrapped_text(c3, texto_pejv2, 36, 230, 540)
         
@@ -320,13 +320,13 @@ def generate_pdf(request):
         accidente: CAS-{aviso}, vehículo {placa} De conformidad con todo lo anterior, firmo en San José, del día {fecha_ingreso_formateada}. 
         ES TODO ***** """    
         # Llamar a la función para dibujar el texto con saltos de línea automáticos
-        draw_wrapped_text(c4, texto_pefv, 36, 770, 540)  # x=100, y=700, ancho máximo=400px
+        draw_wrapped_text(c4, texto_pefv, 36, 820, 540)  # x=100, y=700, ancho máximo=400px
         
         draw_wrapped_text(c4, texto_pefv2, 36, 230, 540)
         
         c4.setFont("Helvetica-Bold", 14)
-        c4.drawString(36, 145, f"{cedula_cliente}")
-        c4.drawString(95, 128, f"{cedula_cliente}")
+        c4.drawString(36, 141, f"{nombre_cliente}")
+        c4.drawString(95, 124, f"{cedula_cliente}")
 
         # Guardar y posicionar el documento
         c4.save()
