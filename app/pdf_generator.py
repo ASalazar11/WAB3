@@ -26,7 +26,7 @@ justified_style = ParagraphStyle(
     'Justify',
     parent=styles['Normal'],
     alignment=TA_JUSTIFY,  # JUSTIFICAR TEXTO
-    fontSize=12,
+    fontSize=11,
     leading=14,  # Espaciado entre líneas
     textColor=colors.black
 )
