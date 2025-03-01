@@ -299,19 +299,19 @@ def generate_pdf(request):
         en que el apoderado haya recibido del Instituto Nacional de Seguros la indemnización total, que corresponde al total de la cuenta que ha 
         generado la reparación del (os) vehículo (s) aquí descrito (s) y referido (s), menos las deducciones registradas en la liquidación final 
         del reclamo. El poderdante renuncia a cualquier reclamo posterior. Lo antes aquí autorizado está relacionado al número de aviso de 
-        accidente: CAS-{aviso}, vehículo {placa} De conformidad con todo lo anterior., firmo en San José, del día {fecha_ingreso_formateada}. 
+        accidente: CAS-{aviso}, vehículo {placa} De conformidad con todo lo anterior, firmo en San José, del día {fecha_ingreso_formateada}. 
         ES TODO ***** """
         
 
 
         # Llamar a la función para dibujar el texto con saltos de línea automáticos
-        draw_wrapped_text(c3, texto_pejv, 60, 785, 500)  # x=100, y=700, ancho máximo=400px
+        draw_wrapped_text(c3, texto_pejv, 70, 785, 520)  # x=100, y=700, ancho máximo=400px
         
-        draw_wrapped_text(c3, texto_pejv2, 60, 170, 500)
+        draw_wrapped_text(c3, texto_pejv2, 70, 170, 520)
         
         c3.setFont("Helvetica-Bold", 14)
-        c3.drawString(75, 100, f"{nombre_estimacion}")
-        c3.drawString(100, 83, f"{cedula_estimacion}")
+        c3.drawString(70, 110, f"{nombre_estimacion}")
+        c3.drawString(110, 95, f"{cedula_estimacion}")
 
         # Guardar y posicionar el documento
         c3.save()
