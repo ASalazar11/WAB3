@@ -138,7 +138,7 @@ def generate_pdf(request):
         nombre_empresa = form_data.get("nombre_empresa")
         
         if consecutivo == ".": 
-            consecutivo = ""
+            consecutivo = placa
        
         consecutivo_prefijo = f"25-{form_data['consecutivo']}"
         sanitized_name = "".join([c if c.isalnum() or c in " ._-()" else "_" for c in nombre_cliente])
@@ -156,7 +156,7 @@ def generate_pdf(request):
         c1 = canvas.Canvas(pdf1_buffer, pagesize=letter)
         if consecutivo == ".": 
             consecutivo = ""
-            #fecha_ingreso == ""
+            fecha_ingreso == ""
             
         c1.setFont("Helvetica-Bold", 50)
         c1.drawString(430, 650, f"{consecutivo}")
