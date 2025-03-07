@@ -140,7 +140,7 @@ def generate_pdf(request):
         if consecutivo == ".": 
             consecutivo = placa
        
-        consecutivo_prefijo = f"25-{form_data['consecutivo']}"
+        consecutivo_prefijo = f"25-{consecutivo}"
         sanitized_name = "".join([c if c.isalnum() or c in " ._-()" else "_" for c in nombre_cliente])
 
 
