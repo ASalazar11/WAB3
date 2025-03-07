@@ -154,7 +154,7 @@ def generate_pdf(request):
         # ✅ 3️⃣ Generar Primer PDF (Valoración)
         pdf1_buffer = io.BytesIO()
         c1 = canvas.Canvas(pdf1_buffer, pagesize=letter)
-        if consecutivo == ".": 
+        if consecutivo == placa: 
             consecutivo = ""
             fecha_ingreso == ""
             
