@@ -156,7 +156,8 @@ def generate_pdf(request):
         c1 = canvas.Canvas(pdf1_buffer, pagesize=letter)
         if consecutivo == placa: 
             consecutivo = ""
-            fecha_ingreso == ""
+            c1.drawString(185, 525, f"{fecha_ingreso}")
+            
             
         c1.setFont("Helvetica-Bold", 50)
         c1.drawString(430, 650, f"{consecutivo}")
@@ -171,7 +172,7 @@ def generate_pdf(request):
         c1.drawString(75, 480, f"{nombre_cliente}")
         
         c1.drawString(420, 525, f"{fecha_evento}")
-        c1.drawString(185, 525, f"{fecha_ingreso}")
+        
         c1.drawString(85, 270, f"{marca}")
         c1.drawString(220, 270, f"{modelo}")
         c1.drawString(360, 270, f"{anio}")
