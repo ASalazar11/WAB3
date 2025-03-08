@@ -157,11 +157,7 @@ def generate_pdf(request):
         
         if consecutivo == placa: 
             consecutivo = ""
-        
-        if consecutivo != placa:
-            c1.drawString(185, 525, f"{fecha_ingreso}") 
-        
-            
+                        
         c1.setFont("Helvetica-Bold", 50)
         c1.drawString(430, 650, f"{consecutivo}")
         c1.setFont("Helvetica-Bold", 22)
@@ -175,6 +171,7 @@ def generate_pdf(request):
         c1.drawString(75, 480, f"{nombre_cliente}")
         
         c1.drawString(420, 525, f"{fecha_evento}")
+        c1.drawString(185, 525, f"{fecha_ingreso}") 
         
         c1.drawString(85, 270, f"{marca}")
         c1.drawString(220, 270, f"{modelo}")
@@ -344,7 +341,9 @@ def generate_pdf(request):
         with zipfile.ZipFile(zip_buffer, "w") as zip_file:
             zip_file.writestr(f"{consecutivo_prefijo}_VALORACION_{sanitized_name}.pdf", pdf1_final.getvalue())
             zip_file.writestr(f"{consecutivo_prefijo}_ESTIMACION_{sanitized_name}.pdf", pdf2_final.getvalue())
+            
             zip_file.writestr(f"{consecutivo_prefijo}_PoderEspecialJuridico_{sanitized_name}.pdf", pdf3_final.getvalue())
+            
             zip_file.writestr(f"{consecutivo_prefijo}_PoderEspecialFisico_{sanitized_name}.pdf", pdf4_final.getvalue())
 
         zip_buffer.seek(0)
