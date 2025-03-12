@@ -170,7 +170,7 @@ def generate_pdf(request):
             consecutivo = ""
         
         checkboxes = {
-            "noSeQueda": "X" if request.form.get("noSeQueda", "off") == "on" else "",
+            "noSeQueda": "X"if request.form.get("noSeQueda") == "on" else "",
             "check_opcion1": "X" if request.form.get("check_opcion1", "off") == "on" else "",
             "check_opcion2": "X" if request.form.get("check_opcion2", "off") == "on" else "",
         }
