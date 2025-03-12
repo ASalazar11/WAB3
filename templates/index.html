@@ -335,9 +335,13 @@
                     
                     <label for="aviso" class="form-label">Número de Caso/Aviso:</label>
                     <input type="text" id="aviso" name="aviso" class="form-control" required>
-                    <div class="form-check mt-2">
-                        <input type="checkbox" class="form-check-input" id="nosequedareparando">
-                        <label class="form-check-label" for="nosequedareparando">NO se queda reparando (No funcional aun)</label>
+                    <div class="col-md-6">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="noSeQueda" name="noSeQueda">
+                            <label class="form-check-label" for="noSeQueda">
+                                El vehiculo se queda Reparando
+                            </label>
+                        </div>
                     </div>
                     
                 </div>
@@ -577,7 +581,30 @@
                 </div>
 
             </div>
+
             <hr>
+
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="check_opcion1" name="check_opcion1">
+                        <label class="form-check-label" for="check_opcion1">
+                            Generar Documentacion para Persona JURIDICA
+                        </label>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="check_opcion2" name="check_opcion2">
+                        <label class="form-check-label" for="check_opcion2">
+                            Generar Documentacion para Persona FISICA
+                        </label>
+                    </div>
+                </div>
+            </div>
+            
+            <hr>
+
             <div class="row mb-3">
                 <div class="col-12 text-center">
                     <button type="submit" class="btn btn-success">Generar PDF</button>

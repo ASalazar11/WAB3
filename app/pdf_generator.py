@@ -90,6 +90,14 @@ def generate_pdf(request):
         for field, value in form_data.items():
             if not value:
                 return jsonify({"error": f"El campo {field} está vacío."}), 400
+            
+        
+        noSeQueda
+        # Obtener el estado de los checkboxes desde el formulario
+        check_opcion1 = request.form.get("check_opcion1") == "on"  # Devuelve True si está marcado
+        check_opcion2 = request.form.get("check_opcion2") == "on"  # Devuelve True si está marcado
+        noSeQueda = request.form.get("noSeQueda") == "on"
+
 
         aviso = form_data["aviso"]
         consecutivo = form_data["consecutivo"]
@@ -177,6 +185,8 @@ def generate_pdf(request):
         c1.drawString(220, 270, f"{modelo}")
         c1.drawString(360, 270, f"{anio}")
         c1.drawString(425, 270, f"{color}")
+ 
+        c1.drawString(425, 200, f"{noSeQueda}")
         
         c1.drawString(130, 350, f"{provincia}")
         c1.drawString(130, 333, f"{canton}")
@@ -342,11 +352,15 @@ def generate_pdf(request):
             zip_file.writestr(f"{consecutivo_prefijo}_VALORACION_{sanitized_name}.pdf", pdf1_final.getvalue())
             zip_file.writestr(f"{consecutivo_prefijo}_ESTIMACION_{sanitized_name}.pdf", pdf2_final.getvalue())
             
-            zip_file.writestr(f"{consecutivo_prefijo}_PoderEspecialJuridico_{sanitized_name}.pdf", pdf3_final.getvalue())
+            if check_opcion1:
+                zip_file.writestr(f"{consecutivo_prefijo}_PoderEspecialJuridico_{sanitized_name}.pdf", pdf3_final.getvalue())
             
-            zip_file.writestr(f"{consecutivo_prefijo}_PoderEspecialFisico_{sanitized_name}.pdf", pdf4_final.getvalue())
+            
+            if check_opcion2:
+                zip_file.writestr(f"{consecutivo_prefijo}_PoderEspecialFisico_{sanitized_name}.pdf", pdf4_final.getvalue())
 
-        zip_buffer.seek(0)
+
+        zip_buffer.seek(0)  
 
         return send_file(
             zip_buffer,
