@@ -44,8 +44,8 @@ def formatear_fecha(fecha):
     Convierte una fecha en formato 'YYYY-MM-DD' a '2 de febrero del 2025'
     """
     meses = {
-        1: "enero", 2: "febrero", 3: "marzo", 4: "abril", 5: "mayo", 6: "junio",
-        7: "julio", 8: "agosto", 9: "septiembre", 10: "octubre", 11: "noviembre", 12: "diciembre"
+        1: "Enero", 2: "Febrero", 3: "Marzo", 4: "Abril", 5: "Mayo", 6: "Junio",
+        7: "Julio", 8: "Agosto", 9: "Septiembre", 10: "Octubre", 11: "Noviembre", 12: "Diciembre"
     }
     
     fecha_dt = datetime.strptime(fecha, "%Y-%m-%d")  
@@ -363,10 +363,10 @@ def generate_pdf(request):
         draw_wrapped_text(c5, texto_vbf, 100, 350, 480)  
         
         c5.setFont("Helvetica-Bold", 11)
-        c5.drawString(450, 680, f"{fecha_ingreso_formateada}")
+        c5.drawString(410, 760, f"{fecha_ingreso_formateada}")
         
-        c5.drawString(96, 160, f"{nombre_cliente}")
-        c5.drawString(165, 130, f"{cedula_cliente}")
+        c5.drawString(80, 150, f"{nombre_cliente}")
+        c5.drawString(120, 140, f"{cedula_cliente}")
         # Guardar y posicionar el documento
         c5.save()
         pdf_vbf_buffer.seek(0)
