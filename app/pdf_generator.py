@@ -387,7 +387,7 @@ def generate_pdf(request):
         
         c6.setFont("Helvetica-Bold", 11)
         c6.drawString(85, 186, f"{nombre_estimacion}")
-        c6.drawString(133, 171, f"{cedula_estimacion}")
+        c6.drawString(136, 171, f"{cedula_estimacion}")
         # Guardar y posicionar el documento
         c6.save()
         pdf_vbj_buffer.seek(0)
