@@ -336,11 +336,6 @@
                     <label for="aviso" class="form-label">Número de Caso/Aviso:</label>
                     <input type="text" id="aviso" name="aviso" class="form-control" required>
 
-                    <div class="form-check">
-                        <input type="checkbox" class="form-check-input" id="noSeQueda" name="noSeQueda">
-                        <label class="form-check-label" for="noSeQueda"> El vehículo se queda Reparando (Aun no funcional) </label>
-                    </div>
-
                 </div>
 
                 <div class="col-md-4">
@@ -582,7 +577,14 @@
             <hr>
 
             <div class="row mb-3">
-                <div class="col-md-6">
+                <div class="col-md-4">
+                    <div class="form-check">
+                        <input type="checkbox" class="form-check-input" id="noSeQueda" name="noSeQueda">
+                        <label class="form-check-label" for="noSeQueda"> El vehículo se queda Reparando (Aun no
+                            funcional) </label>
+                    </div>
+                </div>
+                <div class="col-md-4">
                     <div class="form-check">
                         <input class="form-check-input" type="checkbox" id="check_opcion1" name="check_opcion1">
                         <label class="form-check-label" for="check_opcion1">
@@ -590,7 +592,7 @@
                         </label>
                     </div>
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-4">
                     <div class="form-check">
                         <input class="form-check-input" type="checkbox" id="check_opcion2" name="check_opcion2">
                         <label class="form-check-label" for="check_opcion2">
