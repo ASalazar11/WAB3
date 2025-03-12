@@ -168,7 +168,13 @@ def generate_pdf(request):
         
         if consecutivo == placa: 
             consecutivo = ""
-                        
+        
+        checkboxes = {
+            "noSeQueda": "X" if request.form.get("noSeQueda") == "on" else "",
+            "check_opcion1": "X" if request.form.get("check_opcion1") == "on" else "",
+            "check_opcion2": "X" if request.form.get("check_opcion2") == "on" else "",
+        }
+        
         c1.setFont("Helvetica-Bold", 50)
         c1.drawString(430, 650, f"{consecutivo}")
         c1.setFont("Helvetica-Bold", 22)
@@ -334,16 +340,15 @@ def generate_pdf(request):
         del reclamo. El poderdante renuncia a cualquier reclamo posterior. Lo antes aquí autorizado está relacionado al número de aviso de 
         accidente: CAS-{aviso}, vehículo {placa} De conformidad con todo lo anterior, firmo en San José, del día {fecha_ingreso_formateada}. 
         ES TODO ***** """    
-        # Llamar a la función para dibujar el texto con saltos de línea automáticos
-        draw_wrapped_text(c4, texto_pefv, 36, 810, 540)  # x=100, y=700, ancho máximo=400px
+        
+        draw_wrapped_text(c4, texto_pefv, 36, 810, 540)  
         
         draw_wrapped_text(c4, texto_pefv2, 36, 230, 540)
         
         c4.setFont("Helvetica-Bold", 14)
         c4.drawString(36, 141, f"{nombre_cliente}")
         c4.drawString(95, 124, f"{cedula_cliente}")
-
-        # Guardar y posicionar el documento
+        
         c4.save()
         pdf_pefv_buffer.seek(0)
         
