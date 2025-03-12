@@ -377,18 +377,17 @@ def generate_pdf(request):
         pdf_vbj_buffer = io.BytesIO()
         c6 = canvas.Canvas(pdf_vbj_buffer, pagesize=legal)
 
-        texto_vbj = f"""Por este medio {nombre_estimacion}, portador de la cedula {cedula_estimacion}, como APODERADO DE {nombre_empresa}, cedula jurídica 
-        cedula {cedula_empresa} PROPIETARIO 
-        del vehículo placa {placa} según aviso de accidente CAS {aviso} , autorizo para que la indemnización de dicho
+        texto_vbj = f"""Por este medio {nombre_estimacion}, portador de la cedula {cedula_estimacion}, como Apoderado de {nombre_empresa}, cedula jurídica 
+        cedula {cedula_empresa} PROPIETARIO del vehículo placa {placa} según aviso de accidente CAS {aviso} , autorizo para que la indemnización de dicho
         vehículo sea girada a nombre de Wabe Carrocería y Pintura S.A., cédula jurídica número 3-101-085331  depositada en la cuenta 
         en colones número CR86012300130014399008 o en su defecto en la cuenta en dólares número CR21012300130014399014, ambas correspondientes al SCOTIABANK.
         A su vez manifiesto entera conformidad con la reparación realizada por el Taller WABE CARROCERIA Y PINTURA S.A."""
               
-        draw_wrapped_text(c6, texto_vbj, 85, 395, 448)  
+        draw_wrapped_text(c6, texto_vbj, 85, 380, 448)  
         
         c6.setFont("Helvetica-Bold", 11)
-        c6.drawString(85, 155, f"{nombre_estimacion}")
-        c6.drawString(133, 139, f"{nombre_estimacion}")
+        c6.drawString(85, 171, f"{nombre_estimacion}")
+        c6.drawString(133, 155, f"{cedula_estimacion}")
         # Guardar y posicionar el documento
         c6.save()
         pdf_vbj_buffer.seek(0)
