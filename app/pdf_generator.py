@@ -92,12 +92,12 @@ def generate_pdf(request):
                 return jsonify({"error": f"El campo {field} está vacío."}), 400
             
         
-        noSeQueda
-        # Obtener el estado de los checkboxes desde el formulario
-        # Obtener valores de los checkboxes, si están marcados serán True, de lo contrario False
-        noSeQueda = request.form.get("noSeQueda") == "on"
-        check_opcion1 = request.form.get("check_opcion1") == "on"
-        check_opcion2 = request.form.get("check_opcion2") == "on"
+
+        checkboxes = {
+            "noSeQueda": "X" if request.form.get("noSeQueda") == "on" else "",
+            "check_opcion1": "X" if request.form.get("check_opcion1") == "on" else "",
+            "check_opcion2": "X" if request.form.get("check_opcion2") == "on" else "",
+        }
 
 
         aviso = form_data["aviso"]
@@ -187,7 +187,8 @@ def generate_pdf(request):
         c1.drawString(360, 270, f"{anio}")
         c1.drawString(425, 270, f"{color}")
  
-        c1.drawString(425, 200, f"{noSeQueda}")
+        if checkboxes["noSeQueda"] == "X":
+            c1.drawString(425, 200, f"Queda Reparando")
         
         c1.drawString(130, 350, f"{provincia}")
         c1.drawString(130, 333, f"{canton}")
@@ -352,12 +353,11 @@ def generate_pdf(request):
         with zipfile.ZipFile(zip_buffer, "w") as zip_file:
             zip_file.writestr(f"{consecutivo_prefijo}_VALORACION_{sanitized_name}.pdf", pdf1_final.getvalue())
             zip_file.writestr(f"{consecutivo_prefijo}_ESTIMACION_{sanitized_name}.pdf", pdf2_final.getvalue())
-            
-            if check_opcion1:
+
+            if checkboxes["check_opcion1"] == "X":
                 zip_file.writestr(f"{consecutivo_prefijo}_PoderEspecialJuridico_{sanitized_name}.pdf", pdf3_final.getvalue())
-            
-            
-            if check_opcion2:
+
+            if checkboxes["check_opcion2"] == "X":
                 zip_file.writestr(f"{consecutivo_prefijo}_PoderEspecialFisico_{sanitized_name}.pdf", pdf4_final.getvalue())
 
 
