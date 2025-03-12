@@ -158,6 +158,7 @@ def generate_pdf(request):
         ESTIMACION_PDF_PATH = "pdfs/ESTIMACION.pdf"
         PEJV_PDF_PATH = "pdfs/PEJV.pdf"
         PEFV_PDF_PATH = "pdfs/PEFV.pdf"
+        VBF_PDF_PATH = "pdfs/VistoBuenoFisico.pdf"
         
 
         # ✅ 3️⃣ Generar Primer PDF (Valoración)
@@ -346,6 +347,35 @@ def generate_pdf(request):
         pdf_pefv_buffer.seek(0)
         
         pdf4_final = merge_pdfs(PEFV_PDF_PATH, pdf_pefv_buffer)
+        
+        
+        pdf_vbf_buffer = io.BytesIO()
+        c5 = canvas.Canvas(pdf_vbf_buffer, pagesize=legal)
+
+        texto_pefv = f"""Yo {nombre_cliente}, portador (a) de la cedula {cedula_cliente} en calidad de
+        PROPIETARIA del vehículo placa {placa} según CAS {aviso} autorizo lo anterior 
+        pues he recibido de ustedes la comunicación al detalle todas las 
+        informaciones relacionadas con el proceso de avalúo y trámites ante el INS """
+        
+        fecha_ingreso_formateada = formatear_fecha(fecha_ingreso)
+        
+       
+        draw_wrapped_text(c5, texto_pefv, 36, 810, 540)  # x=100, y=700, ancho máximo=400px
+        
+      
+        
+        c5.setFont("Helvetica-Bold", 14)
+        c5.drawString(36, 141, f"{nombre_cliente}")
+        c5.drawString(95, 124, f"{cedula_cliente}")
+
+        # Guardar y posicionar el documento
+        c5.save()
+        pdf_vbf_buffer.seek(0)
+        
+        pdf5_final = merge_pdfs(VBF_PDF_PATH, pdf5_final)
+        
+        
+        
 
 
         # ✅ 5️⃣ Enviar los archivos en un ZIP
@@ -359,6 +389,7 @@ def generate_pdf(request):
 
             if checkboxes["check_opcion2"] == "X":
                 zip_file.writestr(f"{consecutivo_prefijo}_PoderEspecialFisico_{sanitized_name}.pdf", pdf4_final.getvalue())
+                zip_file.writestr(f"{consecutivo_prefijo}_VistoBuenoFisico_{sanitized_name}.pdf", pdf5_final.getvalue())
 
 
         zip_buffer.seek(0)  
