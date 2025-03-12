@@ -83,7 +83,7 @@ def generate_pdf(request):
             "anio", "color", "asesor", "cedula_asesor",
             "cedula_responsable", "nombre_responsable", "correo_responsable", "telefono_responsable",
             "condicion", "provincia", "canton", "distrito", "cedula_empresa", "nombre_empresa",
-            "cedula_estimacion", "nombre_estimacion","cedula_juridica_2","nombre_juridico_2","noSeQueda"
+            "cedula_estimacion", "nombre_estimacion","cedula_juridica_2","nombre_juridico_2"
         ]
 
         form_data = {field: request.form.get(field, "").strip() for field in required_fields}
@@ -170,10 +170,11 @@ def generate_pdf(request):
             consecutivo = ""
         
         checkboxes = {
-            "noSeQueda": "X" if request.form.get("noSeQueda") else " ",
-            "check_opcion1": "X" if request.form.get("check_opcion1") else " ",
-            "check_opcion2": "X" if request.form.get("check_opcion2")  else " ",
+            "noSeQueda": "X" if request.form.get("noSeQueda", "off") == "on" else "",
+            "check_opcion1": "X" if request.form.get("check_opcion1", "off") == "on" else "",
+            "check_opcion2": "X" if request.form.get("check_opcion2", "off") == "on" else "",
         }
+
         
         c1.setFont("Helvetica-Bold", 50)
         c1.drawString(430, 650, f"{consecutivo}")
