@@ -96,8 +96,8 @@ def generate_pdf(request):
         # Obtener el estado de los checkboxes desde el formulario
         check_opcion1 = request.form.get("check_opcion1") == "on"  # Devuelve True si está marcado
         check_opcion2 = request.form.get("check_opcion2") == "on"  # Devuelve True si está marcado
+        
         noSeQueda = request.form.get("noSeQueda") == "on"
-
 
         aviso = form_data["aviso"]
         consecutivo = form_data["consecutivo"]
