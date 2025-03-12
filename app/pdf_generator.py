@@ -386,8 +386,8 @@ def generate_pdf(request):
         draw_wrapped_text(c6, texto_vbj, 85, 380, 448)  
         
         c6.setFont("Helvetica-Bold", 11)
-        c6.drawString(85, 171, f"{nombre_estimacion}")
-        c6.drawString(133, 155, f"{cedula_estimacion}")
+        c6.drawString(85, 186, f"{nombre_estimacion}")
+        c6.drawString(133, 171, f"{cedula_estimacion}")
         # Guardar y posicionar el documento
         c6.save()
         pdf_vbj_buffer.seek(0)
