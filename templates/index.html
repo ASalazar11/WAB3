@@ -291,7 +291,7 @@
             bloquearConsecutivo.addEventListener("change", function () {
                 if (this.checked) {
                     consecutivoInput.value = ".";
-                    
+
                 } else {
                     consecutivoInput.value = "";
                     consecutivoInput.disabled = false;
@@ -332,17 +332,14 @@
 
             <div class="row mb-3">
                 <div class="col-md-4">
-                    
+
                     <label for="aviso" class="form-label">Número de Caso/Aviso:</label>
                     <input type="text" id="aviso" name="aviso" class="form-control" required>
-                    <div class="col-md-6">
-                        <div class="form-check">
-                            <input type="checkbox" class="form-check-input" id="noSeQueda"
-                                name="noSeQueda" value="N">
-                            <label class="form-check-label" for="noSeQueda"> El vehículo se queda Reparando </label>
-                        </div>
-                    </div>                    
-                    
+                    <input type="hidden" name="noSeQueda" value="off">
+                    <input type="checkbox" class="form-check-input" id="noSeQueda" name="noSeQueda" value="on">
+                    <label class="form-check-label" for="noSeQueda"> El vehículo se queda Reparando </label>
+
+
                 </div>
 
                 <div class="col-md-4">
@@ -601,7 +598,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <hr>
 
             <div class="row mb-3">
