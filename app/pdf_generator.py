@@ -349,6 +349,7 @@ def generate_pdf(request):
         pdf4_final = merge_pdfs(PEFV_PDF_PATH, pdf_pefv_buffer)
         
         
+        
         pdf_vbf_buffer = io.BytesIO()
         c5 = canvas.Canvas(pdf_vbf_buffer, pagesize=legal)
 
@@ -358,25 +359,18 @@ def generate_pdf(request):
         informaciones relacionadas con el proceso de avalúo y trámites ante el INS """
         
         fecha_ingreso_formateada = formatear_fecha(fecha_ingreso)
-        
        
         draw_wrapped_text(c5, texto_pefv, 36, 810, 540)  # x=100, y=700, ancho máximo=400px
-        
-      
         
         c5.setFont("Helvetica-Bold", 14)
         c5.drawString(36, 141, f"{nombre_cliente}")
         c5.drawString(95, 124, f"{cedula_cliente}")
-
         # Guardar y posicionar el documento
         c5.save()
         pdf_vbf_buffer.seek(0)
-        
-        pdf5_final = merge_pdfs(VBF_PDF_PATH, pdf5_final)
-        
+        pdf5_final = merge_pdfs(VBF_PDF_PATH, pdf_vbf_buffer)
         
         
-
 
         # ✅ 5️⃣ Enviar los archivos en un ZIP
         zip_buffer = io.BytesIO()
