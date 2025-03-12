@@ -188,7 +188,7 @@ def generate_pdf(request):
         c1.drawString(425, 270, f"{color}")
  
         if checkboxes["noSeQueda"] == "X":
-            c1.drawString(300, 240, f"Queda Reparando")
+            c1.drawString(285, 230, f"Queda Reparando")
         
         c1.drawString(130, 350, f"{provincia}")
         c1.drawString(130, 333, f"{canton}")
