@@ -360,13 +360,13 @@ def generate_pdf(request):
         
         fecha_ingreso_formateada = formatear_fecha(fecha_ingreso)
        
-        draw_wrapped_text(c5, texto_vbf, 36, 500, 540)  
+        draw_wrapped_text(c5, texto_vbf, 100, 350, 480)  
         
-        c5.drawString(200, 700, f"{fecha_ingreso_formateada}")
+        c5.setFont("Helvetica-Bold", 11)
+        c5.drawString(450, 680, f"{fecha_ingreso_formateada}")
         
-        c5.setFont("Helvetica-Bold", 12)
-        c5.drawString(56, 145, f"{nombre_cliente}")
-        c5.drawString(115, 144, f"{cedula_cliente}")
+        c5.drawString(96, 160, f"{nombre_cliente}")
+        c5.drawString(165, 130, f"{cedula_cliente}")
         # Guardar y posicionar el documento
         c5.save()
         pdf_vbf_buffer.seek(0)
