@@ -159,6 +159,7 @@ def generate_pdf(request):
         PEJV_PDF_PATH = "pdfs/PEJV.pdf"
         PEFV_PDF_PATH = "pdfs/PEFV.pdf"
         VBF_PDF_PATH = "pdfs/VistoBuenoFisico.pdf"
+        VBJ_PDF_PATH = "pdfs/VistoBuenoJuridico.pdf"
         
 
         # ✅ 3️⃣ Generar Primer PDF (Valoración)
@@ -373,6 +374,27 @@ def generate_pdf(request):
         pdf5_final = merge_pdfs(VBF_PDF_PATH, pdf_vbf_buffer)
         
         
+        pdf_vbj_buffer = io.BytesIO()
+        c6 = canvas.Canvas(pdf_vbj_buffer, pagesize=legal)
+
+        texto_vbj = f"""Por este medio {nombre_estimacion}, portador de la cedula {cedula_estimacion}, como APODERADO DE {nombre_empresa}, cedula jurídica 
+        cedula {cedula_empresa} PROPIETARIO 
+        del vehículo placa {placa} según aviso de accidente CAS {aviso} , autorizo para que la indemnización de dicho
+        vehículo sea girada a nombre de Wabe Carrocería y Pintura S.A., cédula jurídica número 3-101-085331  depositada en la cuenta 
+        en colones número CR86012300130014399008 o en su defecto en la cuenta en dólares número CR21012300130014399014, ambas correspondientes al SCOTIABANK.
+        A su vez manifiesto entera conformidad con la reparación realizada por el Taller WABE CARROCERIA Y PINTURA S.A."""
+              
+        draw_wrapped_text(c6, texto_vbj, 85, 395, 448)  
+        
+        c6.setFont("Helvetica-Bold", 11)
+        c6.drawString(85, 155, f"{nombre_estimacion}")
+        c6.drawString(133, 139, f"{nombre_estimacion}")
+        # Guardar y posicionar el documento
+        c6.save()
+        pdf_vbj_buffer.seek(0)
+        pdf6_final = merge_pdfs(VBJ_PDF_PATH, pdf_vbj_buffer)
+        
+        
 
         # ✅ 5️⃣ Enviar los archivos en un ZIP
         zip_buffer = io.BytesIO()
@@ -382,6 +404,7 @@ def generate_pdf(request):
 
             if checkboxes["check_opcion1"] == "X":
                 zip_file.writestr(f"{consecutivo_prefijo}_PoderEspecialJuridico_{sanitized_name}.pdf", pdf3_final.getvalue())
+                zip_file.writestr(f"{consecutivo_prefijo}_VistoBuenoJuridico_{sanitized_name}.pdf", pdf6_final.getvalue())
 
             if checkboxes["check_opcion2"] == "X":
                 zip_file.writestr(f"{consecutivo_prefijo}_PoderEspecialFisico_{sanitized_name}.pdf", pdf4_final.getvalue())
